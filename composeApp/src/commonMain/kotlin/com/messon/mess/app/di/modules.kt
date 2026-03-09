@@ -14,6 +14,7 @@ import com.messon.mess.app.presentation.viewmodel.CollegeScreenVM
 import com.messon.mess.app.presentation.viewmodel.CouponViewModel
 import com.messon.mess.app.presentation.viewmodel.MenuCreateVM
 import com.messon.mess.app.presentation.viewmodel.MenuFetchVM
+import com.messon.mess.app.presentation.viewmodel.MessRuleVM
 import org.koin.core.module.Module
 import org.koin.dsl.module
 import org.koin.compose.viewmodel.dsl.viewModel
@@ -67,6 +68,13 @@ val sharedModule = module {
 
     viewModel {
         MenuFetchVM(
+            secureStorage = get(),
+            messRepository = get()
+        )
+    }
+
+    viewModel {
+        MessRuleVM(
             secureStorage = get(),
             messRepository = get()
         )

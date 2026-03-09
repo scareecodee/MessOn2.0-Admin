@@ -128,7 +128,7 @@ fun MenuHeader(
 
 @Composable
 fun CreateMenuScreen(
-    menuCreateVM: MenuCreateVM = koinViewModel()
+    menuCreateVM: MenuCreateVM
 ) {
     var selectedDay by remember { mutableStateOf("Mon") }
     var activeSlot by remember { mutableStateOf("B") }

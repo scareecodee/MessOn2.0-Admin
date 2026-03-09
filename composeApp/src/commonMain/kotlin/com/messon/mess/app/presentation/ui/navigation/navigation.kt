@@ -20,16 +20,20 @@ import com.messon.mess.app.domain.auth.GoogleAuth
 import com.messon.mess.app.presentation.ui.screens.auth.SignInRoute
 import com.messon.mess.app.presentation.ui.screens.college.CollegeListScreen
 import com.messon.mess.app.presentation.ui.screens.mainscreen.MainScreen
+import com.messon.mess.app.presentation.ui.screens.mess.CreateMenuScreen
+import com.messon.mess.app.presentation.ui.screens.mess.MessRuleScreen
+import com.messon.mess.app.presentation.ui.screens.mess.ViewMessMenuScreen
 import com.messon.mess.app.presentation.ui.state.AuthState
 import com.messon.mess.app.presentation.viewmodel.AuthViewModel
 import com.messon.mess.app.presentation.viewmodel.CollegeScreenVM
 import com.messon.mess.app.presentation.viewmodel.CouponViewModel
+import com.messon.mess.app.presentation.viewmodel.MenuCreateVM
+import com.messon.mess.app.presentation.viewmodel.MenuFetchVM
+import com.messon.mess.app.presentation.viewmodel.MessRuleVM
 import com.messon.mess.app.theme.CustomColors
 import com.messon.mess.app.theme.enterLeft
 import com.messon.mess.app.theme.exitRight
 import com.messon.mess.app.utils.Screen
-
-
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
@@ -107,12 +111,6 @@ fun AppNav(
             )
         }
 
-
-
-
-
-
-
         composable(
             route = Screen.CollegeListScreen.route,
             enterTransition = enterLeft,
@@ -141,11 +139,56 @@ fun AppNav(
         ){
             MainScreen(
                 onReviewsClick = {},
-                onComplaintClick = {},
-                onMessMenuClick = {},
-                onBellIconClick ={},
-                onNotificationsClick = {},
+                onComplaintClick = {
+                },
+                onMessMenuClick = {
+                    navController.navigate(Screen.MenuCreateScreen.route){
+                        launchSingleTop=true
+                    }
+                },
+                onBellIconClick ={
+                    navController.navigate(Screen.MessRuleScreen.route)
+                },
+                onNotificationsClick = {
+                    navController.navigate(Screen.ViewMessMenuScreen.route)
+                },
                 couponViewModel = couponViewModel
+            )
+        }
+
+        composable (
+            route=Screen.MenuCreateScreen.route,
+            enterTransition = enterLeft,
+            exitTransition = exitRight
+        ){
+            val menuCreateVM: MenuCreateVM=koinViewModel()
+            CreateMenuScreen(
+                menuCreateVM = menuCreateVM
+            )
+        }
+
+
+        composable (
+            route=Screen.ViewMessMenuScreen.route,
+            enterTransition = enterLeft,
+            exitTransition = exitRight
+        ){
+            val menuFetchVM: MenuFetchVM=koinViewModel()
+            ViewMessMenuScreen(
+                onBackBtnClick = {navController.popBackStack()},
+                menuFetchVM = menuFetchVM
+            )
+        }
+
+        composable (
+            route=Screen.MessRuleScreen.route,
+            enterTransition = enterLeft,
+            exitTransition = exitRight
+        ){
+            val messRuleVM: MessRuleVM=koinViewModel()
+            MessRuleScreen(
+                onBackBtnClick = {navController.popBackStack()},
+                messRuleVM =messRuleVM
             )
         }
 

@@ -32,7 +32,6 @@ class MenuFetchVM(
         viewModelScope.launch(Dispatchers.IO) {
 
             val token = secureStorage.getAccessToken()
-//            val messId=secureStorage.getMessId()
 
             if (token.isNullOrBlank()) {
                 _uiState.value =
@@ -43,7 +42,6 @@ class MenuFetchVM(
             messRepository.fetchMessMenu(
                 token = token,
                 weekType = WeekType.CURRENT_WEEK.value,
-                messId = "",
             )
                 .onSuccess {
                     _uiState.value = FetchMenuState.Success(it)

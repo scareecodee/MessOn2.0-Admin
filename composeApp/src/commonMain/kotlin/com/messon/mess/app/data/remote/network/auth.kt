@@ -6,6 +6,7 @@ import com.messon.mess.app.utils.NetworkError
 import io.ktor.client.HttpClient
 import com.messon.mess.app.utils.Result
 import io.ktor.client.call.body
+import io.ktor.client.request.get
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
 import io.ktor.http.ContentType

@@ -10,7 +10,7 @@ data class CreateMenuReqDto(
     @SerialName("meal_slot")
     val mealSlot: String,
 
-    @SerialName("meal_Type")
+    @SerialName("meal_type")
     val mealType: String,
 
     @SerialName("dishes")
@@ -27,7 +27,7 @@ data class MenuResDto(
     @SerialName("meal_slot")
     val mealSlot: String,
 
-    @SerialName("meal_Type")
+    @SerialName("meal_type")
     val mealType: String,
 
     @SerialName("dishes")

@@ -9,11 +9,13 @@ fun getDish(
     diet: Int
 ): String {
 
-    val mealType = if (diet == 0) MealType.VEG.value else MealType.NON_VEG.value
+    val mealType =
+        if (diet == 0) MealType.VEG.value
+        else MealType.NON_VEG.value
 
     return menu.firstOrNull {
         it.day.lowercase().startsWith(day.lowercase()) &&
                 it.mealSlot.equals(slot, ignoreCase = true) &&
-                it.mealType.lowercase() == mealType
+                it.mealType.lowercase() == mealType.lowercase()
     }?.dishes ?: "Not available"
 }

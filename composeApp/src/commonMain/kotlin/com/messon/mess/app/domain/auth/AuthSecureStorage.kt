@@ -5,6 +5,7 @@ import com.messon.mess.app.domain.dataModel.LoginResponse
 
 expect class AuthSecureStorage{
     suspend fun saveLogin(response: LoginResponse)
+
     suspend fun getAccessToken(): String?
     suspend fun getEmail(): String?
     suspend fun getPicture():String?

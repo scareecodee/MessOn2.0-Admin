@@ -24,7 +24,6 @@ class AuthViewModel(
     private val dispatcher: CoroutineDispatcher,
     private val collegeRepository: CollegeRepository
 ) : ViewModel() {
-
     private val _uiState = MutableStateFlow<AuthState>(AuthState.Idle)
     val uiState: StateFlow<AuthState> = _uiState.asStateFlow()
 
@@ -46,10 +45,12 @@ class AuthViewModel(
         }
     }
 
+
     fun onGoogleClick(googleAuth: GoogleAuth) {
         _uiState.value = AuthState.Loading
 
         viewModelScope.launch(dispatcher) {
+
             googleAuth.getGoogleToken()
                 .onSuccess { token ->
                     authRepository.login(loginRequest = LoginRequest(

@@ -82,7 +82,6 @@ class MenuCreateVM(
         viewModelScope.launch(Dispatchers.IO) {
 
             val token = secureStorage.getAccessToken()
-//            val messId=secureStorage.getMessId()
 
             if (token.isNullOrBlank()) {
                 _uiState.value =
@@ -93,43 +92,42 @@ class MenuCreateVM(
            messRepository.saveMenuToDb(
                token = token,
                weekType = WeekType.CURRENT_WEEK.value,
-               messId = "",
                menus = _weeklyMenu.value.flatMap { (day, dayMenu) ->
 
                    listOf(
                        Menu(
-                           day = day.name,
-                           mealSlot = MealSlot.BREAKFAST.name,
+                           day = day.value,
+                           mealSlot = MealSlot.BREAKFAST.value,
                            mealType = MealType.VEG.value,
                            dishes = dayMenu.breakfast.veg
                        ),
                        Menu(
-                           day = day.name,
-                           mealSlot = MealSlot.BREAKFAST.name,
+                           day = day.value,
+                           mealSlot = MealSlot.BREAKFAST.value,
                            mealType = MealType.NON_VEG.value,
                            dishes = dayMenu.breakfast.nonVeg
                        ),
                        Menu(
-                           day = day.name,
-                           mealSlot = MealSlot.LUNCH.name,
+                           day = day.value,
+                           mealSlot = MealSlot.LUNCH.value,
                            mealType = MealType.VEG.value,
                            dishes = dayMenu.lunch.veg
                        ),
                        Menu(
-                           day = day.name,
-                           mealSlot = MealSlot.LUNCH.name,
+                           day = day.value,
+                           mealSlot = MealSlot.LUNCH.value,
                            mealType = MealType.NON_VEG.value,
                            dishes = dayMenu.lunch.nonVeg
                        ),
                        Menu(
-                           day = day.name,
-                           mealSlot = MealSlot.DINNER.name,
+                           day = day.value,
+                           mealSlot = MealSlot.DINNER.value,
                            mealType = MealType.VEG.value,
                            dishes = dayMenu.dinner.veg
                        ),
                        Menu(
-                           day = day.name,
-                           mealSlot = MealSlot.DINNER.name,
+                           day = day.value,
+                           mealSlot = MealSlot.DINNER.value,
                            mealType = MealType.NON_VEG.value,
                            dishes = dayMenu.dinner.nonVeg
                        )

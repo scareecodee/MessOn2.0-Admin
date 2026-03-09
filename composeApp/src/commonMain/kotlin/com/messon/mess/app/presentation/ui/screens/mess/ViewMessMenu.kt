@@ -47,7 +47,7 @@ import org.koin.compose.viewmodel.koinViewModel
 @Composable
 fun ViewMessMenuScreen(
     onBackBtnClick:()-> Unit,
-    menuFetchVM: MenuFetchVM= koinViewModel()
+    menuFetchVM: MenuFetchVM
 ) {
 
     var selectedDay by remember { mutableStateOf("Mon") }
