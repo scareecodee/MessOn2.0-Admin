@@ -9,11 +9,10 @@ import com.messon.mess.app.utils.onError
 import com.messon.mess.app.utils.onSuccess
 import kotlinx.coroutines.launch
 import co.touchlab.kermit.Logger
-import com.messon.mess.app.data.remote.dto.CouponDetailDto
 import com.messon.mess.app.domain.dataModel.CouponDetail
 import com.messon.mess.app.presentation.mapper.toDto
-import com.messon.mess.app.utils.CouponVerificationState
-import com.messon.mess.app.utils.MarkCouponAsUsedState
+import com.messon.mess.app.presentation.ui.state.CouponVerificationState
+import com.messon.mess.app.presentation.ui.state.MarkCouponAsUsedState
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

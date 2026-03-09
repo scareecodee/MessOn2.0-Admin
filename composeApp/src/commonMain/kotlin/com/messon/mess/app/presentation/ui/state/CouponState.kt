@@ -1,4 +1,4 @@
-package com.messon.mess.app.utils
+package com.messon.mess.app.presentation.ui.state
 
 import com.messon.mess.app.domain.dataModel.CouponVerificationRes
 import com.messon.mess.app.domain.dataModel.MarkCouponAsUsed

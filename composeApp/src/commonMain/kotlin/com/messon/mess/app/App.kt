@@ -1,33 +1,32 @@
-package com.messon.app
+package com.messon.mess.app
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.*
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.compose.rememberNavController
-import com.messon.mess.app.domain.auth.AuthSecureStorage
 import com.messon.mess.app.domain.auth.GoogleAuth
-import com.messon.mess.app.presentation.ui.navigation.AppNav
-import com.messon.mess.app.presentation.viewmodel.AuthViewModel
-import com.messon.mess.app.presentation.viewmodel.CouponViewModel
+import com.messon.mess.app.presentation.ui.screens.mess.CreateMenuScreen
+import com.messon.mess.app.presentation.ui.screens.mess.ViewMessMenuScreen
 
 
 @Composable
-@Preview
 fun App(
-    authSecureStorage: AuthSecureStorage,
-    authViewModel: AuthViewModel,
     googleAuth: GoogleAuth,
-    couponViewModel: CouponViewModel
 ) {
 MaterialTheme {
     val navController=rememberNavController()
 
-    AppNav(
-        navController=navController,
-        viewModel = authViewModel,
-        authSecureStorage=authSecureStorage,
-        googleAuth = googleAuth,
-        couponViewModel = couponViewModel
-    )
+//    AppNav(
+//        navController=navController,
+//        googleAuth = googleAuth,
+//    )
+//    ViewMessMenuScreen(
+//        onBackBtnClick = {}
+//    )
+
+    CreateMenuScreen()
+//    ViewMessMenuScreen(
+//        onBackBtnClick ={}
+//    )
 }
 
-    }
+
+}

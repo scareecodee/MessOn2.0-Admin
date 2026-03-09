@@ -21,6 +21,7 @@ fun createHttpClient(engine: HttpClientEngine): HttpClient{
             json(
                 json= Json {
                     ignoreUnknownKeys=true
+                    encodeDefaults = true
                 }
             )
         }

@@ -31,7 +31,7 @@ class Auth(
 
         val response=try {
             httpClient.post(
-                urlString = "${BASE_URL}mess-admin/login",
+                urlString = "${BASE_URL}login/google",
             ) {
                 contentType(ContentType.Application.Json)
                 setBody(

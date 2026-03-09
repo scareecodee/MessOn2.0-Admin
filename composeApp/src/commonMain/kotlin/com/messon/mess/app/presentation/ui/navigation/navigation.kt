@@ -7,115 +7,145 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.StrokeCap
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import com.messon.mess.app.domain.auth.AuthSecureStorage
 import com.messon.mess.app.domain.auth.GoogleAuth
 import com.messon.mess.app.presentation.ui.screens.auth.SignInRoute
-import com.messon.mess.app.presentation.ui.screens.mainscreen.ComplaintScreen
+import com.messon.mess.app.presentation.ui.screens.college.CollegeListScreen
 import com.messon.mess.app.presentation.ui.screens.mainscreen.MainScreen
-import com.messon.mess.app.presentation.ui.screens.mainscreen.NotificationScreen
+import com.messon.mess.app.presentation.ui.state.AuthState
 import com.messon.mess.app.presentation.viewmodel.AuthViewModel
+import com.messon.mess.app.presentation.viewmodel.CollegeScreenVM
 import com.messon.mess.app.presentation.viewmodel.CouponViewModel
+import com.messon.mess.app.theme.CustomColors
 import com.messon.mess.app.theme.enterLeft
 import com.messon.mess.app.theme.exitRight
 import com.messon.mess.app.utils.Screen
 
 
+import org.koin.compose.viewmodel.koinViewModel
+
 @Composable
 fun AppNav(
     navController: NavHostController,
-    viewModel: AuthViewModel,
-    googleAuth: GoogleAuth,
-    authSecureStorage: AuthSecureStorage,
-    couponViewModel: CouponViewModel
-){
-    var sessionChecked by remember { mutableStateOf(false) }
-    var isSessionValid by remember{ mutableStateOf(false) }
+    googleAuth: GoogleAuth
+) {
+    val authViewModel: AuthViewModel = koinViewModel()
+    val couponViewModel: CouponViewModel=koinViewModel()
 
-    LaunchedEffect(Unit){
-        isSessionValid=authSecureStorage.isSessionValid()
-        sessionChecked=true
+
+    val authState by authViewModel.uiState.collectAsStateWithLifecycle()
+
+    var hasNavigated by rememberSaveable{ mutableStateOf(false) }
+
+    LaunchedEffect(authState) {
+
+        if (hasNavigated) return@LaunchedEffect
+
+        when (authState) {
+
+            is AuthState.Success -> {
+                hasNavigated = true
+                navController.navigate(Screen.MainScreen.route) {
+                    popUpTo(0) { inclusive = true }
+                    launchSingleTop = true
+                }
+            }
+
+            AuthState.Unauthenticated -> {
+                hasNavigated = true
+                navController.navigate(Screen.CollegeListScreen.route) {
+                    popUpTo(0) { inclusive = true }
+                    launchSingleTop = true
+                }
+            }
+
+            else -> Unit
+        }
     }
 
-    if(!sessionChecked)
-    {
-        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center){
-            CircularProgressIndicator()
+    if (authState is AuthState.Idle || authState is AuthState.Loading) {
+        Box(
+            modifier = Modifier.fillMaxSize(),
+            contentAlignment = Alignment.Center
+        ) {
+            CircularProgressIndicator(
+                color = CustomColors.RichCerulean,
+                strokeCap = StrokeCap.Round
+            )
         }
         return
     }
+
     NavHost(
         navController = navController,
-        startDestination = if(isSessionValid) Screen.MainScreen.route else Screen.LoginScreen.route
-    ){
+        startDestination = Screen.CollegeListScreen.route,
+        modifier = Modifier.fillMaxSize()
+    ) {
+
         composable(
             route = Screen.LoginScreen.route,
             enterTransition = enterLeft,
             exitTransition = exitRight
         ) {
+
             SignInRoute(
-                viewModel = viewModel,
-                onLoginSuccess = { navController.navigate(Screen.MainScreen.route) },
-                googleAuth = googleAuth
+                viewModel = authViewModel,
+                googleAuth = googleAuth,
+                onLoginSuccess = {
+                    navController.navigate(Screen.MainScreen.route) {
+                        launchSingleTop = true
+                    }
+                }
+            )
+        }
+
+
+
+
+
+
+
+        composable(
+            route = Screen.CollegeListScreen.route,
+            enterTransition = enterLeft,
+            exitTransition = exitRight
+        ) {
+
+            val collegeVM: CollegeScreenVM = koinViewModel()
+
+            CollegeListScreen(
+                collegeScreenVM = collegeVM,
+                onBackClick = {},
+                onCardClick = {
+                    navController.navigate(Screen.LoginScreen.route) {
+                        launchSingleTop = true
+                    }
+                }
             )
 
         }
 
-        composable(
+
+        composable (
             route=Screen.MainScreen.route,
             enterTransition = enterLeft,
             exitTransition = exitRight
-        ) {
+        ){
             MainScreen(
-                onComplaintClick = {
-                    navController.navigate(Screen.ComplaintScreen.route){
-                        launchSingleTop=true
-                    }
-                },
                 onReviewsClick = {},
-                onNotificationsClick = {
-                    navController.navigate(Screen.NotificationScreen.route){
-                        launchSingleTop=true
-                    }
-                },
-                onBellIconClick = {},
+                onComplaintClick = {},
                 onMessMenuClick = {},
+                onBellIconClick ={},
+                onNotificationsClick = {},
                 couponViewModel = couponViewModel
-            )
-        }
-
-        composable(
-            route=Screen.ComplaintScreen.route,
-            enterTransition = enterLeft,
-            exitTransition = exitRight
-        ) {
-            ComplaintScreen(
-                modifier = Modifier,
-                onBackBtnClick = {
-                    navController.popBackStack()
-                },
-                onMarkAsReadBtnClick = {}
-            )
-        }
-
-
-        composable(
-            route=Screen.NotificationScreen.route,
-            enterTransition = enterLeft,
-            exitTransition = exitRight
-        ) {
-            NotificationScreen(
-                modifier = Modifier,
-                onBackBtnClick = {
-                    navController.popBackStack()
-                },
-                onFabClick = {}
             )
         }
 

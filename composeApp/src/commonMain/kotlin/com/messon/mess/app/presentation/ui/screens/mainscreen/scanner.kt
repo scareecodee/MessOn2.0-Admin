@@ -35,8 +35,8 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import co.touchlab.kermit.Logger
 import com.messon.mess.app.domain.dataModel.CouponDetail
 import com.messon.mess.app.presentation.viewmodel.CouponViewModel
-import com.messon.mess.app.utils.CouponVerificationState
-import com.messon.mess.app.utils.MarkCouponAsUsedState
+import com.messon.mess.app.presentation.ui.state.CouponVerificationState
+import com.messon.mess.app.presentation.ui.state.MarkCouponAsUsedState
 import kotlinx.serialization.json.Json
 import messon.composeapp.generated.resources.invalid
 import messon.composeapp.generated.resources.valid

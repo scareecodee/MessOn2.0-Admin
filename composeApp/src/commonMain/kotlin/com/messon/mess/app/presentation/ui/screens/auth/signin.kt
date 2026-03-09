@@ -40,7 +40,7 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import com.messon.mess.app.domain.auth.GoogleAuth
 import com.messon.mess.app.presentation.viewmodel.AuthViewModel
-import com.messon.mess.app.utils.AuthState
+import com.messon.mess.app.presentation.ui.state.AuthState
 import messon.composeapp.generated.resources.Res
 import multiplatform.network.cmptoast.ToastGravity
 import multiplatform.network.cmptoast.ToastPadding
