@@ -102,6 +102,7 @@ class MessApi(
         return when(response.status.value){
             in 200..299->{
                 val mess=response.body<List<MenuResDto>>()
+                Log.d(tag = "ktor", message = {mess.toString()})
                 Result.Success(mess)
             }
             401->Result.Error(NetworkError.UNAUTHORIZED)

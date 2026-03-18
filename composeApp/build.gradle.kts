@@ -84,8 +84,9 @@ kotlin {
 
 
             implementation("network.chaintech:qr-kit:3.1.3")
-
             implementation("network.chaintech:cmptoast:1.0.71")
+            implementation("network.chaintech:kmp-date-time-picker:1.1.1")
+
             implementation(libs.coil.compose)
             implementation(libs.coil.network.ktor)
 
