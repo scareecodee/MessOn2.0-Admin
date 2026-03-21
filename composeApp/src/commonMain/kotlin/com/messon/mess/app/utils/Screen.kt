@@ -11,7 +11,10 @@ sealed class Screen(val route: String) {
 
     object MessRuleScreen: Screen(route ="mess_rule_screen")
 
+    object MealPrefWindow: Screen(route ="meal_pref_window")
 
+    object MessTimingScreen: Screen(route ="mess_timing_screen")
 
+    object MessTimeSetting: Screen(route ="mess_time_setting")
 
 }

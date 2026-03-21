@@ -8,6 +8,8 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -25,32 +27,69 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.style.TextOverflow
 import com.messon.mess.app.presentation.ui.component.TimeRow
+import com.messon.mess.app.presentation.ui.state.PrefWindowState
+import com.messon.mess.app.presentation.viewmodel.PrefWindowVM
+import com.messon.mess.app.utils.WeekType
 import com.messon.mess.app.utils.toHumanReadable
 import messon.composeapp.generated.resources.Res
 import messon.composeapp.generated.resources.publicsansbold
 import messon.composeapp.generated.resources.publicsansmedium
 import messon.composeapp.generated.resources.publicsansregular
 import messon.composeapp.generated.resources.publicsanssemibold
+import multiplatform.network.cmptoast.showToast
 import network.chaintech.kmp_date_time_picker.utils.DateTimePickerView
 import network.chaintech.kmp_date_time_picker.utils.TimeFormat
 import network.chaintech.kmp_date_time_picker.utils.WheelPickerDefaults
 import org.jetbrains.compose.resources.Font
 
 @Composable
-fun MealPreferenceAdminScreen(
+fun MealPrefWindow(
     onBackClick: () -> Unit,
+    prefWindowVM: PrefWindowVM
 ) {
     var showDateTimePicker by remember{ mutableStateOf(false) }
     var isClosingSelected by remember { mutableStateOf(false) }
-    var closingTime by remember { mutableStateOf("") }
-    var openingTime by remember { mutableStateOf("") }
+
+
+    val openingTime by prefWindowVM.openingTime.collectAsState()
+    val closingTime by prefWindowVM.closingTime.collectAsState()
+    val windowStatus by prefWindowVM.windowStatus.collectAsState()
+
+    val savePrefWindowState by prefWindowVM.saveState.collectAsState()
+    val fetchState by prefWindowVM.fetchState.collectAsState()
+    val isSaving = savePrefWindowState is PrefWindowState.Loading
+
+
+    LaunchedEffect(Unit) {
+        prefWindowVM.fetchPrefWindow(WeekType.CURRENT_WEEK)
+    }
+
+    LaunchedEffect(fetchState) {
+        when (fetchState) {
+            is PrefWindowState.Error -> {
+                showToast((fetchState as PrefWindowState.Error).message)
+            }
+            else -> {}
+        }
+    }
+
+    LaunchedEffect(savePrefWindowState){
+        when(savePrefWindowState){
+            is PrefWindowState.Error -> {
+                showToast(message = (savePrefWindowState as PrefWindowState.Error).message)
+            }
+
+            else -> {}
+        }
+    }
+
 
     ConstraintLayout(
         modifier = Modifier.fillMaxSize()
             .background(CustomColors.OffWhite)
     ) {
 
-        val (headerBg, topBar, titleSection, mainCard, infoBox, footer, listRef) = createRefs()
+        val (headerBg, topBar, titleSection,listRef) = createRefs()
 
         Box(
             modifier = Modifier
@@ -190,7 +229,7 @@ fun MealPreferenceAdminScreen(
                                 shape = RoundedCornerShape(50)
                             ) {
                                 Text(
-                                    "Active",
+                                   if(windowStatus) "Active" else "Inactive",
                                     modifier = Modifier.padding(
                                         horizontal = 12.dp,
                                         vertical = 4.dp
@@ -206,7 +245,7 @@ fun MealPreferenceAdminScreen(
 
                         TimeRow(
                             label = "Opening",
-                            time = openingTime,
+                            time = openingTime?.toHumanReadable() ?: "--",
                             icon = Icons.Default.CalendarToday,
                             iconColor = CustomColors.HoneyBronze,
                             onClick = {
@@ -219,7 +258,7 @@ fun MealPreferenceAdminScreen(
 
                         TimeRow(
                             label = "Closing",
-                            time = closingTime,
+                            time = closingTime?.toHumanReadable() ?: "--",
                             icon = Icons.Default.Schedule,
                             iconColor = CustomColors.RichCerulean,
                             onClick =
@@ -281,14 +320,18 @@ fun MealPreferenceAdminScreen(
             item {
                 Spacer(modifier = Modifier.height(25.dp))
                 Button(
-                    onClick = {},
+                    enabled = !isSaving ,
+                    onClick = {
+                        prefWindowVM.savePrefWindow(WeekType.CURRENT_WEEK)
+                    },
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(55.dp)
                         .padding(horizontal = 24.dp),
                     shape = RoundedCornerShape(30.dp),
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = CustomColors.RichCerulean
+                        containerColor = CustomColors.RichCerulean,
+                        disabledContainerColor = CustomColors.RichCerulean
                     )
                 ) {
 
@@ -304,7 +347,6 @@ fun MealPreferenceAdminScreen(
                 }
             }
             }
-
         }
 
     WheelDateTimePickerView(
@@ -337,7 +379,11 @@ fun MealPreferenceAdminScreen(
         ),
         onDoneClick = {
             showDateTimePicker=false
-            if(isClosingSelected) closingTime=it.toHumanReadable() else openingTime=it.toHumanReadable()
+            if (isClosingSelected) {
+                prefWindowVM.updateClosing(it)
+            } else {
+                prefWindowVM.updateOpening(it)
+            }
                       },
         onDismiss = {showDateTimePicker=false},
         dateTimePickerView= DateTimePickerView.BOTTOM_SHEET_VIEW,

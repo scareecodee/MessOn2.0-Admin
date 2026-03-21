@@ -21,7 +21,10 @@ import com.messon.mess.app.presentation.ui.screens.auth.SignInRoute
 import com.messon.mess.app.presentation.ui.screens.college.CollegeListScreen
 import com.messon.mess.app.presentation.ui.screens.mainscreen.MainScreen
 import com.messon.mess.app.presentation.ui.screens.mess.CreateMenuScreen
+import com.messon.mess.app.presentation.ui.screens.mess.MealPrefWindow
 import com.messon.mess.app.presentation.ui.screens.mess.MessRuleScreen
+import com.messon.mess.app.presentation.ui.screens.mess.MessTimeSettingScreen
+import com.messon.mess.app.presentation.ui.screens.mess.MessTimingScreen
 import com.messon.mess.app.presentation.ui.screens.mess.ViewMessMenuScreen
 import com.messon.mess.app.presentation.ui.state.AuthState
 import com.messon.mess.app.presentation.viewmodel.AuthViewModel
@@ -30,6 +33,8 @@ import com.messon.mess.app.presentation.viewmodel.CouponViewModel
 import com.messon.mess.app.presentation.viewmodel.MenuCreateVM
 import com.messon.mess.app.presentation.viewmodel.MenuFetchVM
 import com.messon.mess.app.presentation.viewmodel.MessRuleVM
+import com.messon.mess.app.presentation.viewmodel.MessTimingVM
+import com.messon.mess.app.presentation.viewmodel.PrefWindowVM
 import com.messon.mess.app.theme.CustomColors
 import com.messon.mess.app.theme.enterLeft
 import com.messon.mess.app.theme.exitRight
@@ -43,6 +48,8 @@ fun AppNav(
 ) {
     val authViewModel: AuthViewModel = koinViewModel()
     val couponViewModel: CouponViewModel=koinViewModel()
+    val messTimingVM: MessTimingVM=koinViewModel()
+
 
 
     val authState by authViewModel.uiState.collectAsStateWithLifecycle()
@@ -138,8 +145,11 @@ fun AppNav(
             exitTransition = exitRight
         ){
             MainScreen(
-                onReviewsClick = {},
+                onReviewsClick = {
+                    navController.navigate(Screen.MessTimingScreen.route)
+                },
                 onComplaintClick = {
+                    navController.navigate(Screen.MealPrefWindow.route)
                 },
                 onMessMenuClick = {
                     navController.navigate(Screen.MenuCreateScreen.route){
@@ -189,6 +199,41 @@ fun AppNav(
             MessRuleScreen(
                 onBackBtnClick = {navController.popBackStack()},
                 messRuleVM =messRuleVM
+            )
+        }
+
+        composable (
+            route=Screen.MealPrefWindow.route,
+            enterTransition = enterLeft,
+            exitTransition = exitRight
+        ){
+            val prefWindowVM: PrefWindowVM=koinViewModel()
+            MealPrefWindow(
+                onBackClick = { navController.popBackStack() },
+                prefWindowVM = prefWindowVM
+            )
+        }
+
+        composable (
+            route=Screen.MessTimeSetting.route,
+            enterTransition = enterLeft,
+            exitTransition = exitRight
+        ){
+            MessTimeSettingScreen(
+                onBackClick = { navController.popBackStack() },
+                messTimingVM = messTimingVM
+            )
+        }
+
+        composable (
+            route=Screen.MessTimingScreen.route,
+            enterTransition = enterLeft,
+            exitTransition = exitRight
+        ){
+            MessTimingScreen(
+                onBackBtnClick = { navController.popBackStack() },
+                onCardClick = { navController.navigate(Screen.MessTimeSetting.route) },
+                messTimingVM = messTimingVM
             )
         }
 

@@ -1,8 +1,11 @@
 package com.messon.mess.app.data.remote.network
 import co.touchlab.kermit.Logger
 import com.messon.mess.app.data.remote.dto.CreateMenuReqDto
+import com.messon.mess.app.data.remote.dto.FetchPrefTimeDto
+import com.messon.mess.app.data.remote.dto.MealPrefTimeDto
 import com.messon.mess.app.data.remote.dto.MenuResDto
 import com.messon.mess.app.data.remote.dto.MessRuleDto
+import com.messon.mess.app.data.remote.dto.MessTimingDto
 import com.messon.mess.app.utils.NetworkError
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
@@ -203,4 +206,179 @@ class MessApi(
         }
     }
 
+    suspend fun saveMealPrefWindow(
+        weekType: String,
+        token:String,
+        mealPrefTime: MealPrefTimeDto
+    ): Result<FetchPrefTimeDto, NetworkError>
+    {
+        Log.d(tag = "Ktor", message = {"saving pref window"})
+
+        val response=try {
+            httpClient.patch(
+                urlString = "${BASE_URL}mess/create/submission-window/${weekType}"
+            ) {
+                contentType(ContentType.Application.Json)
+                header("Authorization", "Bearer $token")
+                setBody(mealPrefTime)
+            }
+        } catch (e: UnresolvedAddressException){
+            return  Result.Error(NetworkError.NO_INTERNET)
+        }
+        catch (e: SerializationException){
+            return  Result.Error(NetworkError.SERIALIZATION)
+        }
+        catch (e: Exception){
+            Log.d(tag = "Ktor", message = {e.message.toString()})
+
+            return  Result.Error(NetworkError.UNKNOWN)
+        }
+        Log.d(tag = "Ktor", message = {response.toString()})
+        println("STATUS CODE = ${response.status}")
+
+        return when(response.status.value){
+            in 200..299->{
+                val mess=response.body<FetchPrefTimeDto>()
+                Result.Success(mess)
+            }
+            401->Result.Error(NetworkError.UNAUTHORIZED)
+            403->Result.Error(NetworkError.FORBIDDEN)
+            409 -> Result.Error(NetworkError.CONFLICT)
+            408 ->  Result.Error(NetworkError.REQUEST_TIMEOUT)
+            413 ->  Result.Error(NetworkError.PAYLOAD_TOO_LARGE)
+            in 500..599->  Result.Error(NetworkError.SERVER_ERROR)
+            else ->  Result.Error(NetworkError.UNKNOWN)
+        }
+    }
+
+
+    suspend fun fetchPrefWindow(
+        weekType: String,
+        token:String,
+    ): Result<FetchPrefTimeDto, NetworkError>
+    {
+        Log.d(tag = "Ktor", message = {"saving pref window"})
+
+        val response=try {
+            httpClient.get(
+                urlString = "${BASE_URL}fetch/mess/submission-window/${weekType}"
+            ) {
+                contentType(ContentType.Application.Json)
+                header("Authorization", "Bearer $token")
+            }
+        } catch (e: UnresolvedAddressException){
+            return  Result.Error(NetworkError.NO_INTERNET)
+        }
+        catch (e: SerializationException){
+            return  Result.Error(NetworkError.SERIALIZATION)
+        }
+        catch (e: Exception){
+            Log.d(tag = "Ktor", message = {e.message.toString()})
+
+            return  Result.Error(NetworkError.UNKNOWN)
+        }
+        Log.d(tag = "Ktor", message = {response.toString()})
+        println("STATUS CODE = ${response.status}")
+
+        return when(response.status.value){
+            in 200..299->{
+                val mess=response.body<FetchPrefTimeDto>()
+                Result.Success(mess)
+            }
+            401->Result.Error(NetworkError.UNAUTHORIZED)
+            403->Result.Error(NetworkError.FORBIDDEN)
+            409 -> Result.Error(NetworkError.CONFLICT)
+            408 ->  Result.Error(NetworkError.REQUEST_TIMEOUT)
+            413 ->  Result.Error(NetworkError.PAYLOAD_TOO_LARGE)
+            in 500..599->  Result.Error(NetworkError.SERVER_ERROR)
+            else ->  Result.Error(NetworkError.UNKNOWN)
+        }
+    }
+
+    suspend fun saveMessTiming(
+        token:String,
+        messTiming:List<MessTimingDto>
+    ): Result<List<MessTimingDto>, NetworkError>
+    {
+        Log.d(tag = "Ktor", message = {"saving pref window"})
+
+        val response=try {
+            httpClient.patch(
+                urlString = "${BASE_URL}create/mess/meal-slot-expiry"
+            ) {
+                contentType(ContentType.Application.Json)
+                header("Authorization", "Bearer $token")
+                setBody(messTiming)
+            }
+        } catch (e: UnresolvedAddressException){
+            return  Result.Error(NetworkError.NO_INTERNET)
+        }
+        catch (e: SerializationException){
+            return  Result.Error(NetworkError.SERIALIZATION)
+        }
+        catch (e: Exception){
+            Log.d(tag = "Ktor", message = {e.message.toString()})
+
+            return  Result.Error(NetworkError.UNKNOWN)
+        }
+        Log.d(tag = "Ktor", message = {response.toString()})
+        println("STATUS CODE = ${response.status}")
+
+        return when(response.status.value){
+            in 200..299->{
+                val mess=response.body<List<MessTimingDto>>()
+                Result.Success(mess)
+            }
+            401->Result.Error(NetworkError.UNAUTHORIZED)
+            403->Result.Error(NetworkError.FORBIDDEN)
+            409 -> Result.Error(NetworkError.CONFLICT)
+            408 ->  Result.Error(NetworkError.REQUEST_TIMEOUT)
+            413 ->  Result.Error(NetworkError.PAYLOAD_TOO_LARGE)
+            in 500..599->  Result.Error(NetworkError.SERVER_ERROR)
+            else ->  Result.Error(NetworkError.UNKNOWN)
+        }
+    }
+
+
+    suspend fun fetchMessTiming(
+        token:String,
+    ): Result<List<MessTimingDto>, NetworkError>
+    {
+        Log.d(tag = "Ktor", message = {"saving pref window"})
+
+        val response=try {
+            httpClient.get(
+                urlString = "${BASE_URL}fetch/mess/meal-slot-expiry"
+            ) {
+                contentType(ContentType.Application.Json)
+                header("Authorization", "Bearer $token")
+            }
+        } catch (e: UnresolvedAddressException){
+            return  Result.Error(NetworkError.NO_INTERNET)
+        }
+        catch (e: SerializationException){
+            return  Result.Error(NetworkError.SERIALIZATION)
+        }
+        catch (e: Exception){
+            Log.d(tag = "Ktor", message = {e.message.toString()})
+
+            return  Result.Error(NetworkError.UNKNOWN)
+        }
+        Log.d(tag = "Ktor", message = {response.toString()})
+        println("STATUS CODE = ${response.status}")
+
+        return when(response.status.value){
+            in 200..299->{
+                val mess=response.body<List<MessTimingDto>>()
+                Result.Success(mess)
+            }
+            401->Result.Error(NetworkError.UNAUTHORIZED)
+            403->Result.Error(NetworkError.FORBIDDEN)
+            409 -> Result.Error(NetworkError.CONFLICT)
+            408 ->  Result.Error(NetworkError.REQUEST_TIMEOUT)
+            413 ->  Result.Error(NetworkError.PAYLOAD_TOO_LARGE)
+            in 500..599->  Result.Error(NetworkError.SERVER_ERROR)
+            else ->  Result.Error(NetworkError.UNKNOWN)
+        }
+    }
 }
