@@ -43,7 +43,6 @@ fun MessRuleScreen(
     messRuleVM: MessRuleVM
 ) {
     val daysOfWeek = WeekDay.entries
-
     val saveState by messRuleVM.saveRuleState.collectAsState()
     val fetchState by messRuleVM.fetchRuleState.collectAsState()
     val schedule by messRuleVM.schedule.collectAsState()

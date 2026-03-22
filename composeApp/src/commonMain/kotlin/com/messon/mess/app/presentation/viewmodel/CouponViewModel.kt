@@ -10,9 +10,9 @@ import com.messon.mess.app.utils.onSuccess
 import kotlinx.coroutines.launch
 import co.touchlab.kermit.Logger
 import com.messon.mess.app.domain.dataModel.CouponDetail
+import com.messon.mess.app.domain.dataModel.CouponVerificationRes
 import com.messon.mess.app.presentation.mapper.toDto
 import com.messon.mess.app.presentation.ui.state.CouponVerificationState
-import com.messon.mess.app.presentation.ui.state.MarkCouponAsUsedState
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -28,11 +28,19 @@ class CouponViewModel(
 
     private val log = Logger.withTag("CMP_LOG")
 
+    private val _couponDetail=MutableStateFlow<CouponVerificationRes?>(null)
+    val couponDetail=_couponDetail.asStateFlow()
+
+    fun updateCouponDetail(couponDetail: CouponVerificationRes){
+        _couponDetail.value=couponDetail
+    }
+
+    fun clearCouponDetail(){
+        _couponDetail.value=null
+    }
     private val _couponVerificationState = MutableStateFlow<CouponVerificationState>(CouponVerificationState.Idle)
     val couponVerificationState: StateFlow<CouponVerificationState> =_couponVerificationState.asStateFlow()
 
-    private val _markCouponAsUsed = MutableStateFlow<MarkCouponAsUsedState>(MarkCouponAsUsedState.Idle)
-    val markCouponAsUsed: StateFlow<MarkCouponAsUsedState> =_markCouponAsUsed.asStateFlow()
     fun verifyCoupon(
         couponDetail: CouponDetail
     ) {
@@ -55,6 +63,7 @@ class CouponViewModel(
             )
                 .onSuccess {
                     _couponVerificationState.value = CouponVerificationState.Success(it)
+                    updateCouponDetail(it)
                 }
                 .onError {
                     _couponVerificationState.value = CouponVerificationState.Error(it.toString())
@@ -62,37 +71,9 @@ class CouponViewModel(
         }
     }
 
-    fun markCouponAsUsed(
-        couponDetail: CouponDetail
-    ) {
-        _markCouponAsUsed.value = MarkCouponAsUsedState.Loading
-
-        viewModelScope.launch(dispatcher) {
-
-            val token = secureStorage.getAccessToken()
-            log.d(tag = "token from disk", message = { token.toString() })
-
-            if (token.isNullOrBlank()) {
-                _markCouponAsUsed.value =
-                    MarkCouponAsUsedState.Error("Session expired. Please login again.")
-                return@launch
-            }
-
-           couponVerificationRepo.markCouponAsUsed(token = token, couponDetailDto = couponDetail.toDto())
-                .onSuccess {
-                   _markCouponAsUsed.value = MarkCouponAsUsedState.Success(it)
-                }
-                .onError {
-                    _markCouponAsUsed.value = MarkCouponAsUsedState.Error(it.toString())
-                }
-        }
-    }
 
     fun clearVerificationError(){
         _couponVerificationState.value= CouponVerificationState.Idle
     }
 
-    fun clearMarkAsUsedError(){
-        _markCouponAsUsed.value= MarkCouponAsUsedState.Idle
-    }
 }

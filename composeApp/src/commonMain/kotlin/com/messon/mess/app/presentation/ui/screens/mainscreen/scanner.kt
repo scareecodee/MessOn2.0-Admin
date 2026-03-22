@@ -17,8 +17,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.constraintlayout.compose.ConstraintLayout
-import androidx.constraintlayout.compose.Dimension
 import com.messon.mess.app.theme.CustomColors
 import messon.composeapp.generated.resources.Res
 import messon.composeapp.generated.resources.publicsanssemibold
@@ -36,24 +34,37 @@ import co.touchlab.kermit.Logger
 import com.messon.mess.app.domain.dataModel.CouponDetail
 import com.messon.mess.app.presentation.viewmodel.CouponViewModel
 import com.messon.mess.app.presentation.ui.state.CouponVerificationState
-import com.messon.mess.app.presentation.ui.state.MarkCouponAsUsedState
 import kotlinx.serialization.json.Json
 import messon.composeapp.generated.resources.invalid
 import messon.composeapp.generated.resources.valid
 import org.jetbrains.compose.resources.painterResource
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.scaleOut
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.unit.sp
+
 
 @Suppress("SuspiciousIndentation")
 @Composable
 fun ScannerScreen(
+    onViewDetail:()-> Unit,
     modifier: Modifier,
     couponViewModel: CouponViewModel,
 ) {
-    val Log= Logger.withTag("CMP_TOAST")
+    val Log = Logger.withTag("CMP_TOAST")
     val couponVerificationState by couponViewModel.couponVerificationState.collectAsStateWithLifecycle(
-        CouponVerificationState.Idle)
-
-    val markCouponAsUsedState by couponViewModel.markCouponAsUsed.collectAsStateWithLifecycle(
-        MarkCouponAsUsedState.Idle)
+        CouponVerificationState.Idle
+    )
 
     var scannedCouponDetail by remember { mutableStateOf<CouponDetail?>(null) }
     var flashlightOn by remember { mutableStateOf(false) }
@@ -63,45 +74,19 @@ fun ScannerScreen(
     LaunchedEffect(couponVerificationState) {
         if (couponVerificationState is CouponVerificationState.Error) {
             showToast((couponVerificationState as CouponVerificationState.Error).message)
-            couponViewModel.clearVerificationError()
-        }
-
-    }
-
-    LaunchedEffect(markCouponAsUsedState) {
-        when (markCouponAsUsedState) {
-            is MarkCouponAsUsedState.Error -> {
-                showToast((markCouponAsUsedState as MarkCouponAsUsedState.Error).message)
-                couponViewModel.clearMarkAsUsedError()
-            }
-            is MarkCouponAsUsedState.Success -> {
-                showToast("Coupon marked as used")
-                couponViewModel.clearMarkAsUsedError()
-            }
-            else -> Unit
         }
     }
+
+
     LaunchedEffect(Unit) {
         couponViewModel.clearVerificationError()
     }
 
-
-    ConstraintLayout(
+    Box(
         modifier = modifier.fillMaxSize()
     ) {
-
-        val (camera, torch, scanAgainBtn, actionButton,stateRef) = createRefs()
-
-
         QrScanner(
-            modifier = Modifier
-                .fillMaxSize()
-                .constrainAs(camera) {
-                    top.linkTo(parent.top)
-                    bottom.linkTo(parent.bottom)
-                    start.linkTo(parent.start)
-                    end.linkTo(parent.end)
-                },
+            modifier = Modifier.fillMaxSize(),
             overlayBorderColor =
                 if (scanEnabled) CustomColors.LightBlue
                 else CustomColors.HoneyBronze,
@@ -138,7 +123,6 @@ fun ScannerScreen(
                 }
 
                 scanEnabled = false
-                showToast(message = it)
             },
             onFailure = {
             },
@@ -146,148 +130,179 @@ fun ScannerScreen(
             customOverlay = null
         )
 
-        IconButton(
-            onClick = { flashlightOn = !flashlightOn },
+        Box(
             modifier = Modifier
-                .size(60.dp)
-                .background(
-                    color = CustomColors.HoneyBronze,
-                    shape = CircleShape
-                )
-                .constrainAs(torch) {
-                    bottom.linkTo(actionButton.top, margin = 16.dp)
-                    start.linkTo(parent.start)
-                    end.linkTo(parent.end)
-                }
+                .align(Alignment.TopCenter)
+                .padding(top = 48.dp)
+                .clip(RoundedCornerShape(50))
+                .background(Color.Black.copy(alpha = 0.6f))
+                .padding(horizontal = 24.dp, vertical = 12.dp)
         ) {
-            Icon(
-                imageVector =
-                    if (flashlightOn) Icons.Default.FlashOn
-                    else Icons.Default.FlashOff,
-                contentDescription = "Torch",
-                tint = Color.White
+            Text(
+                text = if (scanEnabled) "Scan any coupon QR code" else "Processing scanned QR...",
+                color = Color.White,
+                fontFamily = FontFamily(Font(Res.font.publicsanssemibold)),
+                fontSize = 14.sp
             )
         }
 
-        AnimatedVisibility(
-            visible = scannedQrJson != null,
-            modifier = Modifier.constrainAs(scanAgainBtn) {
-                bottom.linkTo(torch.top, margin = 12.dp)
-                start.linkTo(parent.start)
-                end.linkTo(parent.end)
-            }
-        ) {
-            OutlinedButton(
-                onClick = {
-                    scannedQrJson = null
-                    scanEnabled = true
-                    couponViewModel.clearVerificationError()
-                    couponViewModel.clearMarkAsUsedError()
-                },
-                shape = RoundedCornerShape(30.dp),
-                border = BorderStroke(1.dp, CustomColors.HoneyBronze),
-                colors = ButtonDefaults.outlinedButtonColors(
-                    contentColor = CustomColors.HoneyBronze
-                )
-            ) {
-                Text(
-                    text = "Scan Again",
-                    fontFamily = FontFamily(Font(Res.font.publicsanssemibold))
-                )
-            }
-        }
-
-        Button(
-            onClick = {
-                scannedCouponDetail?.let {
-                    couponViewModel.markCouponAsUsed(it)
-                }
-            },
-            enabled = scannedCouponDetail != null,
-            modifier = Modifier
-                .height(50.dp)
-                .then(
-                    if (scannedQrJson!= null)
-                        Modifier.border(
-                            1.dp,
-                            CustomColors.RichCerulean,
-                            RoundedCornerShape(30.dp)
-                        )
-                    else Modifier
-                )
-                .constrainAs(actionButton) {
-                    bottom.linkTo(parent.bottom, margin = 30.dp)
-                    start.linkTo(parent.start, margin = 50.dp)
-                    end.linkTo(parent.end, margin = 50.dp)
-                    width = Dimension.fillToConstraints
-                },
-            colors = ButtonDefaults.buttonColors(
-                containerColor = CustomColors.RichCerulean.copy(alpha = 0.3f),
-                disabledContainerColor = Color.LightGray.copy(alpha = 0.4f)
-            ),
-            shape = RoundedCornerShape(30.dp)
-        ) {
-            if (markCouponAsUsedState is MarkCouponAsUsedState.Loading) {
-                CircularProgressIndicator(
-                    color = Color.White,
-                    strokeWidth = 2.dp,
-                    modifier = Modifier.size(18.dp)
-                )
-            } else {
-                Text(
-                    text = "Mark as used",
-                    fontFamily = FontFamily(Font(Res.font.publicsanssemibold)),
-                    color = Color.White,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
-                )
-            }
-
-        }
-
         Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .constrainAs(stateRef) {
-                    top.linkTo(parent.top)
-                    bottom.linkTo(parent.bottom)
-                    start.linkTo(parent.start)
-                    end.linkTo(parent.end)
-                },
+            modifier = Modifier.align(Alignment.Center),
             contentAlignment = Alignment.Center
         ) {
-            AnimatedVisibility(visible = couponVerificationState is CouponVerificationState.Success) {
-                val resp = (couponVerificationState as? CouponVerificationState.Success)?.couponVerificationRes
-                val painterRes = if (resp==null || !resp.isValid) Res.drawable.invalid else Res.drawable.valid
-                    Log.d(tag = "coupon veri resp", message = {resp.toString()})
-                Icon(
-                    painter = painterResource(painterRes),
-                    contentDescription = "Coupon Status",
-                    tint = Color.Unspecified,
+            val isStatusVisible = couponVerificationState is CouponVerificationState.Success ||
+                    couponVerificationState is CouponVerificationState.Loading ||
+                    couponVerificationState is CouponVerificationState.Error
+
+            AnimatedVisibility(
+                visible = isStatusVisible,
+                enter = fadeIn() + scaleIn(),
+                exit = fadeOut() + scaleOut()
+            ) {
+                Box(
                     modifier = Modifier
-                        .size(50.dp)
-                )
-            }
+                        .size(100.dp)
+                        .shadow(16.dp, CircleShape)
+                        .background(Color.White, CircleShape),
+                    contentAlignment = Alignment.Center
+                ) {
+                    if (couponVerificationState is CouponVerificationState.Success) {
+                        val resp = (couponVerificationState as? CouponVerificationState.Success)?.couponVerificationRes
+                        val painterRes = if (resp == null || !resp.isValid) Res.drawable.invalid else Res.drawable.valid
+                        Log.d(tag = "coupon verification resp", message = { resp.toString() })
+                        Icon(
+                            painter = painterResource(painterRes),
+                            contentDescription = "Coupon Status",
+                            tint = Color.Unspecified,
+                            modifier = Modifier.size(55.dp)
+                        )
+                    }
 
+                    if (couponVerificationState is CouponVerificationState.Loading) {
+                        CircularProgressIndicator(
+                            color = CustomColors.RichCerulean,
+                            modifier = Modifier.size(50.dp),
+                            strokeWidth = 4.dp
+                        )
+                    }
 
-            AnimatedVisibility(visible = couponVerificationState is CouponVerificationState.Loading) {
-              CircularProgressIndicator(
-                  color = CustomColors.RichCerulean
-              )
-
-            }
-
-
-            AnimatedVisibility(visible = couponVerificationState is CouponVerificationState.Error) {
-                Icon(
-                    painter = painterResource(Res.drawable.invalid),
-                    contentDescription = "Invalid Coupon",
-                    tint = Color.Unspecified,
-                    modifier = Modifier
-                        .size(50.dp)
-                )
+                    if (couponVerificationState is CouponVerificationState.Error) {
+                        Icon(
+                            painter = painterResource(Res.drawable.invalid),
+                            contentDescription = "Invalid Coupon",
+                            tint = Color.Unspecified,
+                            modifier = Modifier.size(60.dp)
+                        )
+                    }
+                }
             }
         }
 
+        Surface(
+            modifier = Modifier
+                .align(Alignment.BottomCenter)
+                .fillMaxWidth(),
+            shape = RoundedCornerShape(topStart = 32.dp, topEnd = 32.dp),
+            color = MaterialTheme.colorScheme.surface,
+            tonalElevation = 8.dp,
+            shadowElevation = 24.dp
+        ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 24.dp, vertical = 32.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.Center,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    IconButton(
+                        onClick = { flashlightOn = !flashlightOn },
+                        modifier = Modifier
+                            .size(56.dp)
+                            .background(
+                                color = if (flashlightOn) CustomColors.HoneyBronze else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.1f),
+                                shape = CircleShape
+                            )
+                    ) {
+                        Icon(
+                            imageVector = if (flashlightOn) Icons.Default.FlashOn else Icons.Default.FlashOff,
+                            contentDescription = "Torch",
+                            tint = if (flashlightOn) Color.White else MaterialTheme.colorScheme.onSurface
+                        )
+                    }
+
+                    AnimatedVisibility(visible = scannedQrJson != null) {
+                        Row {
+                            Spacer(modifier = Modifier.width(16.dp))
+                            OutlinedButton(
+                                onClick = {
+                                    scannedQrJson = null
+                                    scanEnabled = true
+                                    couponViewModel.clearVerificationError()
+                                    couponViewModel.clearCouponDetail()
+                                },
+                                modifier = Modifier.height(50.dp),
+                                shape = RoundedCornerShape(30.dp),
+                                border = BorderStroke(1.5.dp, CustomColors.HoneyBronze),
+                                colors = ButtonDefaults.outlinedButtonColors(
+                                    contentColor = CustomColors.HoneyBronze
+                                )
+                            ) {
+                                Text(
+                                    text = "Scan Again",
+                                    fontFamily = FontFamily(Font(Res.font.publicsanssemibold)),
+                                    fontSize = 16.sp,
+                                    modifier = Modifier.padding(horizontal = 16.dp)
+                                )
+                            }
+                        }
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(24.dp))
+
+                Button(
+                    onClick =onViewDetail,
+                    enabled = scannedCouponDetail != null,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(52.dp)
+                        .then(
+                            if (scannedQrJson != null)
+                                Modifier.border(
+                                    1.dp,
+                                    CustomColors.RichCerulean,
+                                    RoundedCornerShape(30.dp)
+                                )
+                            else Modifier
+                        ),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = CustomColors.RichCerulean,
+                        disabledContainerColor = Color.LightGray.copy(alpha = 0.4f)
+                    ),
+                    shape = RoundedCornerShape(30.dp)
+                ) {
+                    if (couponVerificationState is CouponVerificationState.Loading) {
+                        CircularProgressIndicator(
+                            color = Color.White,
+                            strokeWidth = 2.dp,
+                            modifier = Modifier.size(24.dp)
+                        )
+                    } else {
+                        Text(
+                            text = "View Detail",
+                            fontFamily = FontFamily(Font(Res.font.publicsanssemibold)),
+                            color = Color.White,
+                            fontSize = 16.sp,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis
+                        )
+                    }
+                }
+            }
+        }
     }
 }

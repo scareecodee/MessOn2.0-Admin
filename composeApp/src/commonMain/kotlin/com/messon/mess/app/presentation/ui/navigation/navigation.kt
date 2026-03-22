@@ -19,6 +19,7 @@ import androidx.navigation.compose.composable
 import com.messon.mess.app.domain.auth.GoogleAuth
 import com.messon.mess.app.presentation.ui.screens.auth.SignInRoute
 import com.messon.mess.app.presentation.ui.screens.college.CollegeListScreen
+import com.messon.mess.app.presentation.ui.screens.mainscreen.CouponDetailScreen
 import com.messon.mess.app.presentation.ui.screens.mainscreen.MainScreen
 import com.messon.mess.app.presentation.ui.screens.mess.CreateMenuScreen
 import com.messon.mess.app.presentation.ui.screens.mess.MealPrefWindow
@@ -145,24 +146,26 @@ fun AppNav(
             exitTransition = exitRight
         ){
             MainScreen(
-                onReviewsClick = {
-                    navController.navigate(Screen.MessTimingScreen.route)
-                },
                 onComplaintClick = {
                     navController.navigate(Screen.MealPrefWindow.route)
                 },
                 onMessMenuClick = {
-                    navController.navigate(Screen.MenuCreateScreen.route){
-                        launchSingleTop=true
+                    navController.navigate(Screen.MenuCreateScreen.route) {
+                        launchSingleTop = true
                     }
                 },
-                onBellIconClick ={
+                onBellIconClick = {
                     navController.navigate(Screen.MessRuleScreen.route)
                 },
                 onNotificationsClick = {
                     navController.navigate(Screen.ViewMessMenuScreen.route)
                 },
-                couponViewModel = couponViewModel
+                couponViewModel = couponViewModel,
+                onViewDetail = { navController.navigate(Screen.CouponDetailScreen.route) },
+                onRatingClick = {},
+                onDayPolicyClick ={navController.navigate(Screen.MessRuleScreen.route)},
+                onMessTimingClick = {navController.navigate(Screen.MessTimingScreen.route)},
+                onWindowTimingClick = {navController.navigate(Screen.MealPrefWindow.route)}
             )
         }
 
@@ -237,5 +240,16 @@ fun AppNav(
             )
         }
 
+
+        composable (
+            route=Screen.CouponDetailScreen.route,
+            enterTransition = enterLeft,
+            exitTransition = exitRight
+        ){
+            CouponDetailScreen(
+                onScanNext = { navController.popBackStack() },
+                couponViewModel = couponViewModel
+            )
+        }
     }
 }

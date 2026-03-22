@@ -14,5 +14,10 @@ object CustomColors {
     val LightBlue = Color(0xFFE9F2F6)
     val Cream = Color(0xFFFFF7EA)
     val LightLavender = Color(0xFFF7F3FA)
+    val Teal = Color(0xFF2A9D8F)
+
+    val Coral = Color(0xFFF26419)
+    val VegGreen = Color(0xFF10B981)
+    val NonVegRed = Color(0xFFEF4444)
 
 }

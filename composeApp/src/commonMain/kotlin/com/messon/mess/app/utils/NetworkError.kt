@@ -12,5 +12,7 @@ enum class NetworkError : Error {
     UNKNOWN,
     INVALID_CREDENTIAL,
     FORBIDDEN,
-    NOT_FOUND
+    NOT_FOUND,
+
+    ALREADY_USED_COUPON
 }

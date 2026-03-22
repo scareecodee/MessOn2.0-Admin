@@ -1,7 +1,9 @@
 package com.messon.mess.app.domain.dataModel
 
 
+import com.messon.mess.app.data.remote.dto.ErrorDetailDto
 import kotlinx.datetime.LocalDate
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -10,9 +12,11 @@ data class CouponDetail(
     val date: LocalDate?,
     val mealSlot: String?,
     val usedAt:Int?,
-    val expiredAt: Long?,
     val couponId: String?,
-    val signature: String?
+    val messId: String?,
+    val collegeId: String?,
+    val signature: String?,
+    val mealType: String?
 ) {
     fun isValid(): Boolean =
         !uid.isNullOrBlank() &&
@@ -20,15 +24,23 @@ data class CouponDetail(
                 !mealSlot.isNullOrBlank() &&
                 !couponId.isNullOrBlank() &&
                 !signature.isNullOrBlank() &&
-                expiredAt != null
+                !messId.isNullOrBlank()&&
+                !collegeId.isNullOrBlank()&&
+                !mealType.isNullOrBlank()
 }
 
 data class CouponVerificationRes(
-    val isValid: Boolean
+    val studentName: String,
+    val rollNo: String,
+    val branch: String,
+    val mealSlot: String,
+    val mealType: String,
+    val scannedAt: String,
+    val isValid: Boolean,
+    val errors:List<ErrorDetail>
 )
 
-data class MarkCouponAsUsed(
-    val isMarkedCouponAsUsed: Boolean
+data class  ErrorDetail(
+    val statusCode: Int,
+    val message: String
 )
-
-

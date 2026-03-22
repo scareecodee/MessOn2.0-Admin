@@ -6,20 +6,19 @@ import androidx.compose.animation.*
 import androidx.compose.animation.core.tween
 import androidx.navigation.NavBackStackEntry
 
-private const val animationDuration = 350
-
-
-val enterLeft: AnimatedContentTransitionScope<NavBackStackEntry>.() -> EnterTransition? = {
-    fadeIn(
-        animationSpec = tween(400)
-    )
+private const val animationDuration = 450
+val enterLeft: AnimatedContentTransitionScope<NavBackStackEntry>.() -> EnterTransition = {
+    slideIntoContainer(
+        towards = AnimatedContentTransitionScope.SlideDirection.Left,
+        animationSpec = tween(animationDuration)
+    ) + fadeIn(animationSpec = tween(animationDuration))
 }
 
-
-val exitRight: AnimatedContentTransitionScope<NavBackStackEntry>.() -> ExitTransition? = {
-    fadeOut(
+val exitRight: AnimatedContentTransitionScope<NavBackStackEntry>.() -> ExitTransition = {
+    slideOutOfContainer(
+        towards = AnimatedContentTransitionScope.SlideDirection.Right,
         animationSpec = tween(animationDuration)
-    )
+    ) + fadeOut(animationSpec = tween(animationDuration))
 }
 
 val popEnterRight: AnimatedContentTransitionScope<NavBackStackEntry>.() -> EnterTransition? = {

@@ -39,11 +39,15 @@ import org.jetbrains.compose.resources.painterResource
 
 @Composable
 fun MainScreen(
-    onReviewsClick:()-> Unit,
     onComplaintClick:()-> Unit,
     onMessMenuClick:()-> Unit,
     onBellIconClick:()->Unit,
     onNotificationsClick:()->Unit,
+    onViewDetail:()-> Unit,
+    onRatingClick:()-> Unit,
+    onDayPolicyClick:()-> Unit,
+    onMessTimingClick:()-> Unit,
+    onWindowTimingClick:()-> Unit,
     couponViewModel: CouponViewModel
 ){
 
@@ -109,13 +113,17 @@ fun MainScreen(
     ) {innerPadding->
         ContentScreen(
             modifier = Modifier.padding(top = 0.dp, bottom = innerPadding.calculateBottomPadding()),
-            selectedScreenIndex=selectedItemIndex,
-            onReviewsClick =onReviewsClick,
+            selectedScreenIndex = selectedItemIndex,
             onComplaintClick = onComplaintClick,
-            onBellIconClick =onBellIconClick,
-            onNotificationsClick =onNotificationsClick,
+            onBellIconClick = onBellIconClick,
+            onNotificationsClick = onNotificationsClick,
             onMessMenuClick = onMessMenuClick,
-            couponViewModel = couponViewModel
+            couponViewModel = couponViewModel,
+            onViewDetail = onViewDetail,
+            onRatingClick = onRatingClick,
+            onDayPolicyClick = onDayPolicyClick,
+            onMessTimingClick = onMessTimingClick,
+            onWindowTimingClick = onWindowTimingClick
         )
     }
 }
@@ -125,27 +133,33 @@ fun MainScreen(
 fun ContentScreen(
     modifier: Modifier,
     selectedScreenIndex: Int,
-    onReviewsClick:()-> Unit,
     onComplaintClick:()-> Unit,
     onMessMenuClick:()-> Unit,
     onBellIconClick:()->Unit,
     onNotificationsClick:()->Unit,
+    onViewDetail:()-> Unit,
+    onRatingClick:()-> Unit,
+    onDayPolicyClick:()-> Unit,
+    onMessTimingClick:()-> Unit,
+    onWindowTimingClick:()-> Unit,
     couponViewModel: CouponViewModel
 ){
     when(selectedScreenIndex){
         0-> HomeScreen(
             modifier = modifier,
-            profileImg = painterResource(Res.drawable.compose_multiplatform),
-            greeting = "Heyy",
-            onReviewsClick =onReviewsClick,
+            onBellIconClick = onBellIconClick,
             onComplaintsClick = onComplaintClick,
-            onBellIconClick =onBellIconClick,
-            onNotificationsClick =onNotificationsClick,
-            onMessMenuClick = onMessMenuClick
+            onRatingsClick = onRatingClick,
+            onNotificationClick = onNotificationsClick,
+            onMessMenuClick = onMessMenuClick,
+            onDayPolicyClick =onDayPolicyClick,
+            onMessTimingClick =onMessTimingClick,
+            onWindowTimingClick = onWindowTimingClick
         )
         1-> ScannerScreen(
             modifier = modifier,
-            couponViewModel = couponViewModel
+            couponViewModel = couponViewModel,
+            onViewDetail = onViewDetail
         )
     }
 }

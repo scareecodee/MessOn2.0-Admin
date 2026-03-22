@@ -8,9 +8,6 @@ import com.messon.mess.app.domain.dataModel.DayMenu
 import com.messon.mess.app.domain.dataModel.Menu
 import com.messon.mess.app.domain.dataModel.MenuItem
 import com.messon.mess.app.domain.repository.MessRepository
-import com.messon.mess.app.presentation.mapper.toDto
-import com.messon.mess.app.presentation.ui.state.CouponVerificationState
-import com.messon.mess.app.presentation.ui.state.MarkCouponAsUsedState
 import com.messon.mess.app.presentation.ui.state.SaveMenuState
 import com.messon.mess.app.utils.MealSlot
 import com.messon.mess.app.utils.MealType
