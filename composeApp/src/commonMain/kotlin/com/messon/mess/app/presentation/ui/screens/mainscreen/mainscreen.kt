@@ -27,6 +27,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.messon.app.domain.dataModel.NavItem
 import com.messon.mess.app.presentation.viewmodel.CouponViewModel
+import com.messon.mess.app.presentation.viewmodel.ScanStatVM
 import com.messon.mess.app.theme.CustomColors
 import messon.composeapp.generated.resources.Res
 import messon.composeapp.generated.resources.compose_multiplatform
@@ -48,7 +49,10 @@ fun MainScreen(
     onDayPolicyClick:()-> Unit,
     onMessTimingClick:()-> Unit,
     onWindowTimingClick:()-> Unit,
-    couponViewModel: CouponViewModel
+    onPrefAnalyticsClick:()-> Unit,
+    onScanAnalyticsClick:()-> Unit,
+    couponViewModel: CouponViewModel,
+    scanStatVM: ScanStatVM
 ){
 
     var selectedItemIndex by remember { mutableStateOf(0) }
@@ -112,7 +116,8 @@ fun MainScreen(
 
     ) {innerPadding->
         ContentScreen(
-            modifier = Modifier.padding(top = 0.dp, bottom = innerPadding.calculateBottomPadding()),
+            modifier = Modifier.padding(top = 0.dp, bottom = innerPadding.calculateBottomPadding())
+                .fillMaxSize(),
             selectedScreenIndex = selectedItemIndex,
             onComplaintClick = onComplaintClick,
             onBellIconClick = onBellIconClick,
@@ -123,7 +128,10 @@ fun MainScreen(
             onRatingClick = onRatingClick,
             onDayPolicyClick = onDayPolicyClick,
             onMessTimingClick = onMessTimingClick,
-            onWindowTimingClick = onWindowTimingClick
+            onWindowTimingClick = onWindowTimingClick,
+            onPrefAnalyticsClick = onPrefAnalyticsClick,
+            onScanAnalyticsClick = onScanAnalyticsClick,
+            scanStatVM = scanStatVM
         )
     }
 }
@@ -142,7 +150,10 @@ fun ContentScreen(
     onDayPolicyClick:()-> Unit,
     onMessTimingClick:()-> Unit,
     onWindowTimingClick:()-> Unit,
-    couponViewModel: CouponViewModel
+    onPrefAnalyticsClick:()-> Unit,
+    onScanAnalyticsClick:()-> Unit,
+    couponViewModel: CouponViewModel,
+    scanStatVM: ScanStatVM
 ){
     when(selectedScreenIndex){
         0-> HomeScreen(
@@ -152,9 +163,12 @@ fun ContentScreen(
             onRatingsClick = onRatingClick,
             onNotificationClick = onNotificationsClick,
             onMessMenuClick = onMessMenuClick,
-            onDayPolicyClick =onDayPolicyClick,
-            onMessTimingClick =onMessTimingClick,
-            onWindowTimingClick = onWindowTimingClick
+            onDayPolicyClick = onDayPolicyClick,
+            onMessTimingClick = onMessTimingClick,
+            onWindowTimingClick = onWindowTimingClick,
+            onPrefAnalyticsClick = onPrefAnalyticsClick,
+            onScanAnalyticsClick = onScanAnalyticsClick,
+            scanStatVM = scanStatVM
         )
         1-> ScannerScreen(
             modifier = modifier,

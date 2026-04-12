@@ -11,7 +11,7 @@ data class CouponDetail(
     val uid: String?,
     val date: LocalDate?,
     val mealSlot: String?,
-    val usedAt:Int?,
+    val usedAt: String?,
     val couponId: String?,
     val messId: String?,
     val collegeId: String?,
@@ -26,7 +26,7 @@ data class CouponDetail(
                 !signature.isNullOrBlank() &&
                 !messId.isNullOrBlank()&&
                 !collegeId.isNullOrBlank()&&
-                !mealType.isNullOrBlank()
+                !mealType.isNullOrBlank() && usedAt.isNullOrBlank()
 }
 
 data class CouponVerificationRes(
@@ -35,7 +35,7 @@ data class CouponVerificationRes(
     val branch: String,
     val mealSlot: String,
     val mealType: String,
-    val scannedAt: String,
+    val scannedAt: String?,
     val isValid: Boolean,
     val errors:List<ErrorDetail>
 )

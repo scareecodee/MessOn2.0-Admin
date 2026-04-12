@@ -11,3 +11,12 @@ data class FetchPrefTime(
     val endTime: String?,
     val status: Boolean
 )
+
+
+
+data class WindowTemplate(
+    val startDay: String?,
+    val endDay: String?,
+    val startTime: String?,
+    val endTime: String?
+)

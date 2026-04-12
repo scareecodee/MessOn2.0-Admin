@@ -65,7 +65,6 @@ fun String.toLocalTimeSafe(): LocalTime {
     return try {
         LocalTime.parse(this)
     } catch (e: Exception) {
-        // fallback if seconds missing
         LocalTime.parse("$this:00")
     }
 }

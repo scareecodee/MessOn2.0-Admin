@@ -156,33 +156,6 @@ fun MessRuleScreen(
 
                 Row(
                     modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(12.dp)
-                ) {
-
-                    StatCard(
-                        modifier = Modifier.weight(1f),
-                        label = "Compulsory",
-                        value = compulsoryCount.toString(),
-                        color = CustomColors.RichCerulean,
-                        icon = Icons.Default.Done
-                    )
-
-                    StatCard(
-                        modifier = Modifier.weight(1f),
-                        label = "Optional",
-                        value = optionalCount.toString(),
-                        color = CustomColors.HoneyBronze,
-                        icon = Icons.Default.Refresh
-                    )
-                }
-            }
-
-            item {
-
-                Spacer(Modifier.height(20.dp))
-
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {

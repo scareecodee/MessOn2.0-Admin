@@ -3,6 +3,7 @@ package com.messon.mess.app.presentation.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.messon.mess.app.domain.auth.AuthSecureStorage
+import com.messon.mess.app.domain.dataModel.Menu
 import com.messon.mess.app.domain.repository.MessRepository
 import com.messon.mess.app.presentation.ui.state.FetchMenuState
 import com.messon.mess.app.utils.WeekType
@@ -24,6 +25,10 @@ class MenuFetchVM(
     private val _uiState = MutableStateFlow<FetchMenuState>(FetchMenuState.Idle)
     val uiState: StateFlow<FetchMenuState> =_uiState.asStateFlow()
 
+    private val _menu = MutableStateFlow<List<Menu>>(emptyList())
+    val menu: StateFlow<List<Menu>> = _menu.asStateFlow()
+
+
     fun fetchMenu(
     ) {
         if(_uiState.value is FetchMenuState.Loading) return
@@ -44,6 +49,7 @@ class MenuFetchVM(
                 weekType = WeekType.CURRENT_WEEK.value,
             )
                 .onSuccess {
+                    _menu.value = it
                     _uiState.value = FetchMenuState.Success(it)
                 }
                 .onError {

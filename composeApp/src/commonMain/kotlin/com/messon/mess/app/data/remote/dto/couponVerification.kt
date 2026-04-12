@@ -26,7 +26,7 @@ data class CouponDetailDto(
     val mealSlot: String,
 
     @SerialName("scanned_at")
-    val usedAt: Int?,
+    val usedAt: String?,
 
     @SerialName("signature")
     val signature:String,
@@ -54,7 +54,7 @@ data class CouponVerificationResDto(
     val mealType: String,
 
     @SerialName("scanned_at")
-    val scannedAt: String,
+    val scannedAt: String?,
 
     @SerialName("success")
     val isValid: Boolean,

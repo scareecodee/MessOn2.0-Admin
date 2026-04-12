@@ -31,6 +31,7 @@ import org.jetbrains.compose.resources.Font
 
 @Composable
 fun TimeRow(
+    modifier: Modifier= Modifier,
     label: String,
     time: String,
     icon: ImageVector,
@@ -39,7 +40,7 @@ fun TimeRow(
 ) {
 
     Row(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .clip(RoundedCornerShape(20.dp))
             .clickable { onClick() },

@@ -271,7 +271,10 @@ fun MessTimeSettingScreen(
                     )
                 ) {
 
-                    Icon(Icons.Default.Sync, null)
+                    Icon(Icons.Default.Sync, null,
+                        tint = Color.White,
+                        modifier = Modifier.size(25.dp)
+                    )
 
                     Spacer(modifier = Modifier.width(12.dp))
 

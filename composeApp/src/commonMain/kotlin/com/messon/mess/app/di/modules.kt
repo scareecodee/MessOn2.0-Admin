@@ -3,6 +3,7 @@ package com.messon.mess.app.di
 import com.messon.mess.app.core.AppDispatchers
 import com.messon.mess.app.data.remote.network.Auth
 import com.messon.mess.app.data.remote.network.CollegeApi
+import com.messon.mess.app.data.remote.network.CouponAnalyticsApi
 import com.messon.mess.app.data.remote.network.CouponVerification
 import com.messon.mess.app.data.remote.network.MessApi
 import com.messon.mess.app.domain.repository.AuthRepository
@@ -12,11 +13,15 @@ import com.messon.mess.app.domain.repository.MessRepository
 import com.messon.mess.app.presentation.viewmodel.AuthViewModel
 import com.messon.mess.app.presentation.viewmodel.CollegeScreenVM
 import com.messon.mess.app.presentation.viewmodel.CouponViewModel
+import com.messon.mess.app.presentation.viewmodel.MealRatingVM
 import com.messon.mess.app.presentation.viewmodel.MenuCreateVM
 import com.messon.mess.app.presentation.viewmodel.MenuFetchVM
 import com.messon.mess.app.presentation.viewmodel.MessRuleVM
 import com.messon.mess.app.presentation.viewmodel.MessTimingVM
+import com.messon.mess.app.presentation.viewmodel.PrefStatVM
 import com.messon.mess.app.presentation.viewmodel.PrefWindowVM
+import com.messon.mess.app.presentation.viewmodel.ScanStatVM
+import com.messon.mess.app.presentation.viewmodel.WindowTemplateVM
 import org.koin.core.module.Module
 import org.koin.dsl.module
 import org.koin.compose.viewmodel.dsl.viewModel
@@ -27,6 +32,8 @@ val sharedModule = module {
     single { Auth(get()) }
     single { CollegeApi(get()) }
     single { MessApi(get()) }
+    single { CouponAnalyticsApi(get()) }
+
 
 
 
@@ -92,6 +99,24 @@ val sharedModule = module {
         MessTimingVM(
             get(),get()
         )
+    }
+
+
+    viewModel {
+        WindowTemplateVM(get(),get())
+    }
+
+    viewModel {
+        PrefStatVM(get(),get())
+    }
+
+    viewModel {
+        ScanStatVM(get(),get())
+
+    }
+
+    viewModel {
+        MealRatingVM(get(),get())
     }
 
 }

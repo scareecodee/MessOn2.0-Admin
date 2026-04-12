@@ -3,8 +3,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.messon.mess.app.domain.auth.AuthSecureStorage
 import com.messon.mess.app.domain.dataModel.MealPrefTime
+import com.messon.mess.app.domain.dataModel.WindowTemplate
 import com.messon.mess.app.domain.repository.MessRepository
 import com.messon.mess.app.presentation.ui.state.PrefWindowState
+import com.messon.mess.app.presentation.ui.state.WindowTemplateState
 import com.messon.mess.app.utils.WeekType
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -137,6 +139,5 @@ class PrefWindowVM(
                 }
         }
     }
-    
     
 }

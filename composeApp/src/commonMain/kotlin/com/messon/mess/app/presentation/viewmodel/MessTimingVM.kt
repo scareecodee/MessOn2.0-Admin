@@ -50,7 +50,9 @@ class MessTimingVM(
 
     fun updateClosing(time: LocalTime) {
         _closingTime.value = time
-    }
+        }
+
+
 
     fun saveMessTiming(
     ) {

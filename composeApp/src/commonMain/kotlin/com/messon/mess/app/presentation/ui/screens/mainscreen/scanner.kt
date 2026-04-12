@@ -266,7 +266,9 @@ fun ScannerScreen(
 
                 Button(
                     onClick =onViewDetail,
-                    enabled = scannedCouponDetail != null,
+                    enabled = scannedCouponDetail != null &&
+                            couponVerificationState !is CouponVerificationState.Error &&
+                            couponVerificationState !is CouponVerificationState.Loading      ,
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(52.dp)

@@ -4,8 +4,11 @@ import androidx.compose.runtime.*
 import androidx.navigation.compose.rememberNavController
 import com.messon.mess.app.domain.auth.GoogleAuth
 import com.messon.mess.app.presentation.ui.navigation.AppNav
-import com.messon.mess.app.presentation.ui.screens.mainscreen.HomeScreen
-import com.messon.mess.app.presentation.ui.screens.mess.MessTimingScreen
+import com.messon.mess.app.presentation.ui.screens.mess.ScanStatScreen
+import com.messon.mess.app.presentation.ui.screens.mess.WindowTemplateScreen
+import com.messon.mess.app.presentation.viewmodel.ScanStatVM
+import com.messon.mess.app.presentation.viewmodel.WindowTemplateVM
+import org.koin.compose.viewmodel.koinViewModel
 
 
 @Composable
@@ -18,7 +21,6 @@ MaterialTheme {
         navController=navController,
         googleAuth = googleAuth,
     )
-
 
 }
 

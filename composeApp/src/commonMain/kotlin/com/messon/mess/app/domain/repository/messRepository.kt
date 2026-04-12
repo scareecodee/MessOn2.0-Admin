@@ -1,11 +1,15 @@
 package com.messon.mess.app.domain.repository
 import com.messon.mess.app.data.remote.dto.MealPrefTimeDto
 import com.messon.mess.app.data.remote.network.MessApi
+import com.messon.mess.app.domain.dataModel.EachDayPrefStat
 import com.messon.mess.app.domain.dataModel.FetchPrefTime
 import com.messon.mess.app.domain.dataModel.MealPrefTime
 import com.messon.mess.app.domain.dataModel.Menu
 import com.messon.mess.app.domain.dataModel.MessRule
 import com.messon.mess.app.domain.dataModel.MessTiming
+import com.messon.mess.app.domain.dataModel.RatingData
+import com.messon.mess.app.domain.dataModel.ScanStat
+import com.messon.mess.app.domain.dataModel.WindowTemplate
 import com.messon.mess.app.presentation.mapper.toDomain
 import com.messon.mess.app.presentation.mapper.toDto
 import com.messon.mess.app.utils.NetworkError
@@ -220,6 +224,140 @@ class MessRepository(
                     data =dto.map {
                         it.toDomain()
                     }
+                )
+            }
+            is Result.Error -> Result.Error(result.error)
+        }
+    }
+
+
+    suspend fun saveWindowTemplate(
+        token: String,
+        template: WindowTemplate
+    ): Result<WindowTemplate, NetworkError> {
+
+        return when (
+            val result =messApi.saveWindowTemplate(
+                token = token,
+                template = template.toDto()
+            )
+        ) {
+            is Result.Success -> {
+
+                val dto=result.data
+
+                Result.Success(
+                    data =dto.toDomain()
+                )
+            }
+            is Result.Error -> Result.Error(result.error)
+        }
+    }
+
+    suspend fun fetchWindowTemplate(
+        token: String,
+    ): Result<WindowTemplate, NetworkError> {
+
+        return when (
+            val result =messApi.fetchWindowTemplate(
+                token = token,
+            )
+        ) {
+            is Result.Success -> {
+
+                val dto=result.data
+
+                Result.Success(
+                    data =dto.toDomain()
+                )
+            }
+            is Result.Error -> Result.Error(result.error)
+        }
+    }
+
+
+    suspend fun fetchPrefStats(
+        token: String,
+        weekType: String
+    ): Result<List<EachDayPrefStat>, NetworkError> {
+
+        return when (
+            val result =messApi.fetchPrefStats(
+                token = token,
+                weekType = weekType,
+            )
+        ) {
+            is Result.Success -> {
+
+                val dto=result.data
+
+                Result.Success(
+                    data =dto.map { it.toDomain() }
+                )
+            }
+            is Result.Error -> Result.Error(result.error)
+        }
+    }
+
+
+    suspend fun fetchScanStats(
+        token: String,
+    ): Result<List<ScanStat>, NetworkError> {
+
+        return when (
+            val result =messApi.fetchScanStats(
+                token = token,
+            )
+        ) {
+            is Result.Success -> {
+
+                val dto=result.data
+
+                Result.Success(
+                    data =dto.map { it.toDomain() }
+                )
+            }
+            is Result.Error -> Result.Error(result.error)
+        }
+    }
+
+    suspend fun fetchTodayScanStats(
+        token: String,
+    ): Result<List<ScanStat>, NetworkError> {
+
+        return when (
+            val result =messApi.fetchScanStats(
+                token = token,
+                days = 1
+            )
+        ) {
+            is Result.Success -> {
+
+                val dto=result.data
+
+                Result.Success(
+                    data =dto.map { it.toDomain() }
+                )
+            }
+            is Result.Error -> Result.Error(result.error)
+        }
+    }
+
+    suspend fun fetchRatings(
+        token: String,
+    ): Result<List<RatingData>, NetworkError> {
+
+        return when (
+            val result =messApi.fetchRatings(
+                token = token,
+            )
+        ) {
+            is Result.Success -> {
+
+                val dto=result.data
+
+                Result.Success(
+                    data =dto.map { it.toDomain() }
                 )
             }
             is Result.Error -> Result.Error(result.error)

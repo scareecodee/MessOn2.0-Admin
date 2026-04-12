@@ -19,5 +19,17 @@ sealed class Screen(val route: String) {
 
     object CouponDetailScreen: Screen(route ="coupon_detail_screen")
 
+    object PrefStatScreen: Screen(route ="pref_stat_screen")
+
+    object WindowTemplateScreen: Screen(route ="window_template_screen")
+
+    object ScanAnalyticsScreen: Screen(route ="scan_analytics_screen")
+
+    object MealRatingScreen: Screen(route ="meal_rating_screen")
+
+
+
+
+
 
 }

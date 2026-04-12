@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
@@ -47,6 +48,7 @@ import org.koin.compose.viewmodel.koinViewModel
 @Composable
 fun ViewMessMenuScreen(
     onBackBtnClick:()-> Unit,
+    onEditBtnClick:()-> Unit,
     menuFetchVM: MenuFetchVM
 ) {
 
@@ -55,8 +57,7 @@ fun ViewMessMenuScreen(
 
     val days = listOf("Mon","Tue","Wed","Thu","Fri","Sat","Sun")
     val uiState by menuFetchVM.uiState.collectAsState()
-    var menu by remember { mutableStateOf<List<Menu>>(emptyList()) }
-
+    val menu by menuFetchVM.menu.collectAsState()
     LaunchedEffect(Unit) {
         menuFetchVM.fetchMenu()
     }
@@ -65,10 +66,6 @@ fun ViewMessMenuScreen(
 
             is FetchMenuState.Error -> {
                 showToast("Error while loading menu")
-            }
-
-            is FetchMenuState.Success -> {
-                menu = (uiState as FetchMenuState.Success).menus
             }
 
             else -> {}
@@ -80,7 +77,7 @@ fun ViewMessMenuScreen(
             .background(CustomColors.OffWhite)
     ) {
 
-        val (scrollContent,statusBarBox,backBtnRef,headingRef) = createRefs()
+        val (scrollContent,statusBarBox,backBtnRef,headingRef,editBtnRef) = createRefs()
 
         Box(
             Modifier
@@ -117,25 +114,40 @@ fun ViewMessMenuScreen(
             }
         )
 
+        IconButton(
+            onClick = onEditBtnClick,
+            modifier = Modifier
+                .constrainAs(editBtnRef) {
+                    end.linkTo(parent.end, margin = 15.dp)
+                    centerVerticallyTo(backBtnRef)
+                }
+                .padding(horizontal = 10.dp)
+                .size(36.dp)
+                .clip(CircleShape)
+                .background(
+                    color = CustomColors.RichCerulean.copy(0.2f),
+                    shape = CircleShape
+                )
+        ) {
+            Icon(
+                imageVector = Icons.Default.Edit,
+                contentDescription = "edit",
+                tint = CustomColors.RichCerulean.copy(0.8f),
+                modifier = Modifier.size(18.dp)
+            )
+        }
+
         LazyColumn(
             modifier = Modifier
                 .constrainAs(scrollContent){
                     top.linkTo(backBtnRef.bottom, margin = 10.dp)
                     bottom.linkTo(parent.bottom)
+                    start.linkTo(parent.start)
+                    end.linkTo(parent.end)
                     height = Dimension.fillToConstraints
                 }
                 .padding(horizontal = 12.dp)
         ){
-
-            item {
-                Text(
-                    "Weekly Menu",
-                    color = CustomColors.BlackberryCream,
-                    fontSize =14.sp,
-                    fontFamily = FontFamily(Font(Res.font.publicsansmedium)),
-                )
-            }
-
 
             item {
                 LazyRow(
@@ -249,6 +261,13 @@ fun ViewMessMenuScreen(
                 Spacer(Modifier.height(100.dp))
 
             }
+        }
+        if (uiState is FetchMenuState.Loading) {
+            CircularProgressIndicator(
+                modifier = Modifier.constrainAs(createRef()) {
+                    centerTo(parent)
+                }
+            )
         }
     }
 }

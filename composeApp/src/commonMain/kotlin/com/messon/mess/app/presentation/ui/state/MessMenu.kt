@@ -7,8 +7,6 @@ sealed class SaveMenuState {
     data class Success(val menus: List<Menu>) : SaveMenuState()
     data class Error(val message: String) : SaveMenuState()
 }
-
-
 sealed class FetchMenuState {
     object Idle : FetchMenuState()
     object Loading :  FetchMenuState()

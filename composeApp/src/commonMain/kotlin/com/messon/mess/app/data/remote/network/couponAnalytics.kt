@@ -3,10 +3,12 @@ package com.messon.mess.app.data.remote.network
 import co.touchlab.kermit.Logger
 import com.messon.mess.app.data.remote.dto.CouponGeneratedStudentCountDto
 import com.messon.mess.app.data.remote.dto.CouponsScannedDto
+import com.messon.mess.app.data.remote.dto.EachSlotAnalyticsDto
 import com.messon.mess.app.utils.NetworkError
 import io.ktor.client.HttpClient
 import com.messon.mess.app.utils.Result
 import io.ktor.client.call.body
+import io.ktor.client.request.get
 import io.ktor.client.request.header
 import io.ktor.client.request.post
 import io.ktor.http.ContentType
@@ -16,20 +18,20 @@ import kotlinx.serialization.SerializationException
 
 
 private const val BASE_URL = "http://172.18.9.63:8000/"
-class CouponAnalytics(
+class CouponAnalyticsApi(
     private val httpClient: HttpClient
 ){
     val Log = Logger.withTag("CMP_LOG")
 
-    suspend fun getNumOfScannedCoupons(
+    suspend fun fetchTodayAnalytics(
         token:String,
-    ): Result<CouponsScannedDto, NetworkError>
+    ): Result<List<EachSlotAnalyticsDto>, NetworkError>
     {
         Log.d(tag = "Ktor", message = {"in login block"})
 
         val response=try {
-            httpClient.post(
-                urlString = "${BASE_URL}mess-admin/dashboard/scanned-coupons-count",
+            httpClient.get(
+                urlString = "${BASE_URL}admin/today/scan-analytics",
             ) {
                 contentType(ContentType.Application.Json)
                 header("Authorization", "Bearer $token")
@@ -50,7 +52,7 @@ class CouponAnalytics(
 
         return when(response.status.value){
             in 200..299->{
-                val user=response.body<CouponsScannedDto>()
+                val user=response.body<List<EachSlotAnalyticsDto>>()
                 Result.Success(user)
             }
             404-> Result.Error(NetworkError.NOT_FOUND)

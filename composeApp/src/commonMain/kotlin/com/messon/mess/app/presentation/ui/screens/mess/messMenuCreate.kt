@@ -24,6 +24,7 @@ import co.touchlab.kermit.Logger
 import com.messon.mess.app.presentation.ui.component.DaySelector
 import com.messon.mess.app.presentation.ui.component.MealSlotTabs
 import com.messon.mess.app.presentation.ui.component.MenuInputCard
+import com.messon.mess.app.presentation.ui.state.SaveMenuState
 import com.messon.mess.app.presentation.viewmodel.MenuCreateVM
 import com.messon.mess.app.theme.CustomColors
 import com.messon.mess.app.utils.MealSlot
@@ -42,7 +43,7 @@ fun MenuHeader(
     selectedDay: String,
     onDaySelected: (String) -> Unit,
     modifier: Modifier = Modifier,
-
+    onBackClick: () -> Unit
 ) {
     Column(modifier = modifier.fillMaxWidth()) {
         ConstraintLayout(
@@ -64,7 +65,7 @@ fun MenuHeader(
                         bottom.linkTo(parent.bottom)
                     }
                     .clip(RoundedCornerShape(16.dp))
-                    .clickable {  }
+                    .clickable {  onBackClick()}
             ) {
                 Icon(
                     Icons.Filled.ChevronLeft,
@@ -128,39 +129,43 @@ fun MenuHeader(
 
 @Composable
 fun CreateMenuScreen(
-    menuCreateVM: MenuCreateVM
+    menuCreateVM: MenuCreateVM,
+    onBackClick:()-> Unit
 ) {
     var selectedDay by remember { mutableStateOf("Mon") }
     var activeSlot by remember { mutableStateOf("B") }
     var vegMenu by remember { mutableStateOf("") }
     var nonVegMenu by remember { mutableStateOf("") }
+    val uiState by menuCreateVM.uiState.collectAsState()
     val weeklyMenu by menuCreateVM.weeklyMenu.collectAsState()
     LaunchedEffect(weeklyMenu) {
         Logger.withTag("mess menu").d { weeklyMenu.toString() }
     }
-    LaunchedEffect(selectedDay, activeSlot) {
+
+    LaunchedEffect(Unit){
+        menuCreateVM.loadMenu()
+    }
+    LaunchedEffect(selectedDay, activeSlot, weeklyMenu) {
 
         val day = convertDay(selectedDay)
         val slot = convertSlot(activeSlot)
 
         val menu = weeklyMenu[day]
 
-        when (slot) {
-            MealSlot.BREAKFAST -> {
-                vegMenu = menu?.breakfast?.veg ?: ""
-                nonVegMenu = menu?.breakfast?.nonVeg ?: ""
-            }
+        val newVeg = when (slot) {
+            MealSlot.BREAKFAST -> menu?.breakfast?.veg
+            MealSlot.LUNCH -> menu?.lunch?.veg
+            MealSlot.DINNER -> menu?.dinner?.veg
+        } ?: ""
 
-            MealSlot.LUNCH -> {
-                vegMenu = menu?.lunch?.veg ?: ""
-                nonVegMenu = menu?.lunch?.nonVeg ?: ""
-            }
+        val newNonVeg = when (slot) {
+            MealSlot.BREAKFAST -> menu?.breakfast?.nonVeg
+            MealSlot.LUNCH -> menu?.lunch?.nonVeg
+            MealSlot.DINNER -> menu?.dinner?.nonVeg
+        } ?: ""
 
-            MealSlot.DINNER -> {
-                vegMenu = menu?.dinner?.veg ?: ""
-                nonVegMenu = menu?.dinner?.nonVeg ?: ""
-            }
-        }
+        if (vegMenu != newVeg) vegMenu = newVeg
+        if (nonVegMenu != newNonVeg) nonVegMenu = newNonVeg
     }
 
 
@@ -202,7 +207,8 @@ fun CreateMenuScreen(
             )
             MenuHeader(
                 selectedDay = selectedDay,
-                onDaySelected = { selectedDay = it }
+                onDaySelected = { selectedDay = it },
+                onBackClick = onBackClick
             )
         }
 
@@ -279,8 +285,8 @@ fun CreateMenuScreen(
                             menuCreateVM.updateMenu(
                                 day = day,
                                 slot = slot,
-                                veg = it,
-                                nonVeg = nonVegMenu
+                                veg = vegMenu,
+                                nonVeg =it
                             )
                         },
                         icon = Icons.Default.Whatshot,
@@ -298,17 +304,9 @@ fun CreateMenuScreen(
             }
         }
 
-        val Log= Logger.withTag("mess menu")
         Button(
+            enabled = uiState !is SaveMenuState.Loading,
             onClick = {
-                val day = convertDay(selectedDay)
-                val slot = convertSlot(activeSlot)
-                menuCreateVM.updateMenu(
-                    day = day,
-                    slot = slot,
-                    veg =vegMenu ,
-                    nonVeg = nonVegMenu
-                )
                 menuCreateVM.saveMenuToDb()
             },
             modifier = Modifier
