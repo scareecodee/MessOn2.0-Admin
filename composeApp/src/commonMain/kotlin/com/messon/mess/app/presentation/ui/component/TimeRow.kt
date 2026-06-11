@@ -7,12 +7,14 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ChevronRight
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -31,19 +33,19 @@ import org.jetbrains.compose.resources.Font
 
 @Composable
 fun TimeRow(
-    modifier: Modifier= Modifier,
+    modifier: Modifier = Modifier,
     label: String,
     time: String,
     icon: ImageVector,
     iconColor: Color,
     onClick: () -> Unit
 ) {
-
     Row(
         modifier = modifier
             .fillMaxWidth()
             .clip(RoundedCornerShape(20.dp))
-            .clickable { onClick() },
+            .clickable { onClick() }
+            .padding(vertical = 4.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
 
@@ -51,38 +53,42 @@ fun TimeRow(
             modifier = Modifier
                 .size(48.dp)
                 .background(
-                    Color.Black.copy(alpha = 0.03f),
-                    RoundedCornerShape(16.dp)
+                    color = iconColor.copy(alpha = 0.1f),
+                    shape = RoundedCornerShape(16.dp)
                 ),
             contentAlignment = Alignment.Center
         ) {
-            Icon(icon, null, tint = iconColor)
+            Icon(
+                imageVector = icon,
+                contentDescription = null,
+                tint = iconColor,
+                modifier = Modifier.size(22.dp)
+            )
         }
 
         Spacer(modifier = Modifier.width(16.dp))
 
         Column(modifier = Modifier.weight(1f)) {
-
             Text(
-                label,
-                fontSize = 12.sp,
+                text = label,
+                fontSize = 11.sp, // Slightly optimized for standard secondary label scales
                 fontFamily = FontFamily(Font(Res.font.publicsansbold)),
-                color = Color.LightGray
+                color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.8f) // High-readability secondary grey
             )
 
             Text(
-                time,
+                text = time,
                 fontSize = 13.sp,
                 fontFamily = FontFamily(Font(Res.font.publicsansmedium)),
-                color = Color(0xFF333333)
+                color = MaterialTheme.colorScheme.onSurface
             )
         }
 
         Icon(
-            Icons.Default.ChevronRight,
-            null,
-            tint = Color.LightGray,
-            modifier = Modifier.size(30.dp)
+            imageVector = Icons.Default.ChevronRight,
+            contentDescription = "Navigate detail",
+            tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f),
+            modifier = Modifier.size(24.dp)
         )
     }
 }

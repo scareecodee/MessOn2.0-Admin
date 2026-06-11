@@ -1,4 +1,5 @@
 package com.messon.mess.app.presentation.ui.screens.mess
+
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -17,9 +18,9 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ChevronLeft
-import androidx.compose.material.icons.filled.FoodBank
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -36,8 +37,7 @@ import com.messon.mess.app.presentation.ui.component.DayDateChip
 import com.messon.mess.app.presentation.ui.component.ScanStatCard
 import com.messon.mess.app.presentation.ui.state.ScanStatState
 import com.messon.mess.app.presentation.viewmodel.ScanStatVM
-import com.messon.mess.app.theme.CustomColors
-import com.messon.mess.app.utils.MealSlot
+import com.messon.mess.app.theme.MessonTheme
 import messon.composeapp.generated.resources.Res
 import messon.composeapp.generated.resources.publicsansbold
 import multiplatform.network.cmptoast.showToast
@@ -46,39 +46,41 @@ import org.jetbrains.compose.resources.Font
 @Composable
 fun ScanStatScreen(
     scanStatVM: ScanStatVM,
-    onBackBtnClick:()-> Unit={}
+    onBackBtnClick: () -> Unit = {}
 ) {
     val fetchState by scanStatVM.uiState.collectAsState()
     val dateList by scanStatVM.dateList.collectAsState()
     val selectedDate by scanStatVM.selectedDate.collectAsState()
     val filteredStats by scanStatVM.filteredStats.collectAsState()
 
-    LaunchedEffect(Unit){
+    val colors = MaterialTheme.colorScheme
+
+    LaunchedEffect(Unit) {
         scanStatVM.fetchScanStat()
     }
 
-    LaunchedEffect(fetchState){
-        when(fetchState){
+    LaunchedEffect(fetchState) {
+        when (fetchState) {
             is ScanStatState.Error -> {
                 showToast((fetchState as ScanStatState.Error).message)
                 scanStatVM.clearFetchState()
             }
-
             else -> {}
         }
     }
 
-
-
     ConstraintLayout(
-        modifier = Modifier.fillMaxSize()
-            .background(CustomColors.OffWhite)
+        modifier = Modifier
+            .fillMaxSize()
+            .background(colors.background)
     ) {
         val (statusBarBox, headingRef, listRef, backBtnRef, dayDateSelector) = createRefs()
+
         Box(
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier
+                .fillMaxWidth()
                 .height(WindowInsets.safeDrawing.asPaddingValues().calculateTopPadding() + 5.dp)
-                .background(CustomColors.LightGrayBlue)
+                .background(MessonTheme.colors.divider)
                 .constrainAs(statusBarBox) {
                     top.linkTo(parent.top)
                     end.linkTo(parent.end)
@@ -96,6 +98,7 @@ fun ScanStatScreen(
             Icon(
                 imageVector = Icons.Default.ChevronLeft,
                 contentDescription = "back btn",
+                tint = colors.onSurface,
                 modifier = Modifier.size(28.dp)
             )
         }
@@ -105,6 +108,7 @@ fun ScanStatScreen(
             text = "Scan Analytics",
             fontSize = 20.sp,
             fontFamily = FontFamily(Font(Res.font.publicsansbold)),
+            color = colors.onSurface,
             modifier = Modifier
                 .constrainAs(headingRef) {
                     start.linkTo(backBtnRef.end, margin = 5.dp)
@@ -112,19 +116,20 @@ fun ScanStatScreen(
                     bottom.linkTo(backBtnRef.bottom)
                 }
         )
+
         LazyRow(
-            modifier = Modifier.constrainAs(dayDateSelector){
-                top.linkTo(headingRef.bottom, margin = 10.dp)
-                start.linkTo(parent.start)
-                end.linkTo(parent.end)
-                width= Dimension.fillToConstraints
-            }
+            modifier = Modifier
+                .constrainAs(dayDateSelector) {
+                    top.linkTo(headingRef.bottom, margin = 10.dp)
+                    start.linkTo(parent.start)
+                    end.linkTo(parent.end)
+                    width = Dimension.fillToConstraints
+                }
                 .padding(vertical = 7.dp),
-            contentPadding = PaddingValues(horizontal =16.dp),
+            contentPadding = PaddingValues(horizontal = 16.dp),
             horizontalArrangement = Arrangement.spacedBy(10.dp)
         ) {
             items(dateList) { item ->
-
                 DayDateChip(
                     item = item,
                     isSelected = item.date == selectedDate,
@@ -135,16 +140,15 @@ fun ScanStatScreen(
             }
         }
 
-
         LazyColumn(
             contentPadding = PaddingValues(bottom = 20.dp),
             modifier = Modifier.constrainAs(listRef) {
-                top.linkTo(dayDateSelector.bottom, margin =16.dp)
+                top.linkTo(dayDateSelector.bottom, margin = 16.dp)
                 start.linkTo(parent.start, margin = 10.dp)
                 end.linkTo(parent.end, margin = 10.dp)
                 bottom.linkTo(parent.bottom, margin = 8.dp)
                 height = Dimension.fillToConstraints
-                width= Dimension.fillToConstraints
+                width = Dimension.fillToConstraints
             },
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(16.dp)
@@ -157,7 +161,7 @@ fun ScanStatScreen(
                     nonVegCount = stat.scannedNonVeg,
                     maxVegCapacity = stat.totalVeg,
                     maxNonVegCapacity = stat.totalNonVeg,
-                    accentColor = CustomColors.RichCerulean.copy(0.8f)
+                    accentColor = colors.primary
                 )
             }
         }

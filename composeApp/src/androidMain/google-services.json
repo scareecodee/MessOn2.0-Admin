@@ -7,6 +7,43 @@
   "client": [
     {
       "client_info": {
+        "mobilesdk_app_id": "1:238348258649:android:10d2dd8e5715cf17fd1048",
+        "android_client_info": {
+          "package_name": "com.messon.faculty.app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "238348258649-77plcogm6icq5rp82au39tkbru48jaoh.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.messon.faculty.app",
+            "certificate_hash": "cc19d8f87ce1215dc8b4f85ed854ceae5ce4dd2c"
+          }
+        },
+        {
+          "client_id": "238348258649-0j2o0hqbhu0pcdrg5i0j1sajg1ppaeeu.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDMWrBLsPPD2HkPsJfU8ufhUqjKT9bGsNw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "238348258649-0j2o0hqbhu0pcdrg5i0j1sajg1ppaeeu.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
         "mobilesdk_app_id": "1:238348258649:android:3027feb4ce562d2afd1048",
         "android_client_info": {
           "package_name": "com.messon.mess.app"

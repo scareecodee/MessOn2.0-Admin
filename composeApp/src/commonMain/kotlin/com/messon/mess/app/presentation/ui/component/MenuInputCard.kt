@@ -28,16 +28,17 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.messon.mess.app.theme.CustomColors
 import messon.composeapp.generated.resources.Res
 import messon.composeapp.generated.resources.publicsansmedium
 import messon.composeapp.generated.resources.publicsansregular
 import messon.composeapp.generated.resources.publicsanssemibold
 import org.jetbrains.compose.resources.Font
+import androidx.compose.material3.*
+import androidx.compose.ui.text.font.FontStyle
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -51,6 +52,8 @@ fun MenuInputCard(
     cardBgColor: Color,
     footerTag: String
 ) {
+    val colorScheme = MaterialTheme.colorScheme
+
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -68,23 +71,29 @@ fun MenuInputCard(
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Box(
                     modifier = Modifier
-                        .size(32.dp)
+                        .size(36.dp)
                         .clip(CircleShape)
                         .background(iconBgColor),
                     contentAlignment = Alignment.Center
                 ) {
-                    Icon(icon, null, modifier = Modifier.size(16.dp), tint = iconTint)
+                    Icon(icon, null, modifier = Modifier.size(18.dp), tint = iconTint)
                 }
-                Spacer(Modifier.width(8.dp))
+                Spacer(Modifier.width(12.dp))
                 Text(
                     text = label,
-                    fontSize =12.sp,
+                    fontSize = 14.sp,
                     fontFamily = FontFamily(Font(Res.font.publicsanssemibold)),
-                    color = CustomColors.BlackberryCream
+                    color = colorScheme.onSurface
                 )
             }
-            if (label.contains("Veg")) {
-                Icon(Icons.Default.AutoAwesome, null, tint = Color(0xFF86EFAC).copy(alpha = 0.8f), modifier = Modifier.size(16.dp))
+
+            if (label.contains("Veg", ignoreCase = true)) {
+                Icon(
+                    Icons.Default.AutoAwesome,
+                    contentDescription = null,
+                    tint = Color(0xFF4CAF50), // Standard soft green
+                    modifier = Modifier.size(18.dp)
+                )
             }
         }
 
@@ -95,35 +104,37 @@ fun MenuInputCard(
             shape = RoundedCornerShape(16.dp),
             placeholder = {
                 Text(
-                    text = "Enter menu items...",
-                    fontSize =12.sp,
-                    fontFamily = FontFamily(Font(Res.font.publicsansmedium))
+                    text = "Enter items here...",
+                    fontSize = 12.sp,
+                    fontFamily = FontFamily(Font(Res.font.publicsansmedium)),
+                    color = colorScheme.onSurface.copy(alpha = 0.5f)
                 )
-                          },
+            },
             colors = OutlinedTextFieldDefaults.colors(
-                focusedContainerColor = Color.White.copy(alpha = 0.5f),
-                unfocusedContainerColor = Color.White.copy(alpha = 0.3f),
-                focusedBorderColor = CustomColors.RichCerulean,
+                focusedContainerColor = colorScheme.surface.copy(alpha = 0.4f),
+                unfocusedContainerColor = colorScheme.surface.copy(alpha = 0.2f),
+                focusedBorderColor = colorScheme.primary,
                 unfocusedBorderColor = Color.Transparent,
-                focusedTextColor = CustomColors.BlackberryCream,
-                unfocusedTextColor = CustomColors.BlackberryCream
+                focusedTextColor = colorScheme.onSurface,
+                unfocusedTextColor = colorScheme.onSurface.copy(alpha = 0.8f)
             ),
             textStyle = TextStyle(
-                fontSize =12.sp,
+                fontSize = 13.sp,
                 fontFamily = FontFamily(Font(Res.font.publicsansregular)),
             ),
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
             minLines = 3
         )
 
+        // Footer
         Box(modifier = Modifier.fillMaxWidth().padding(top = 8.dp)) {
             Text(
                 text = footerTag,
                 modifier = Modifier.align(Alignment.BottomEnd),
-                fontSize =12.sp,
+                fontSize = 11.sp,
                 fontFamily = FontFamily(Font(Res.font.publicsansmedium)),
-                fontStyle = androidx.compose.ui.text.font.FontStyle.Italic,
-                color = CustomColors.BlackberryCream.copy(alpha = 0.3f)
+                fontStyle = FontStyle.Italic,
+                color = colorScheme.onSurface.copy(alpha = 0.4f)
             )
         }
     }

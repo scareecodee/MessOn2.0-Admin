@@ -3,6 +3,7 @@ package com.messon.mess.app.presentation.ui.navigation
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -19,8 +20,11 @@ import androidx.navigation.compose.composable
 import com.messon.mess.app.domain.auth.GoogleAuth
 import com.messon.mess.app.presentation.ui.screens.auth.SignInRoute
 import com.messon.mess.app.presentation.ui.screens.college.CollegeListScreen
+import com.messon.mess.app.presentation.ui.screens.mainscreen.ComplaintScreen
 import com.messon.mess.app.presentation.ui.screens.mainscreen.CouponDetailScreen
+import com.messon.mess.app.presentation.ui.screens.mainscreen.CouponStatusScreen
 import com.messon.mess.app.presentation.ui.screens.mainscreen.MainScreen
+import com.messon.mess.app.presentation.ui.screens.mainscreen.NotificationScreen
 import com.messon.mess.app.presentation.ui.screens.mess.CreateMenuScreen
 import com.messon.mess.app.presentation.ui.screens.mess.MealPrefWindow
 import com.messon.mess.app.presentation.ui.screens.mess.MealRatingScreen
@@ -44,7 +48,6 @@ import com.messon.mess.app.presentation.viewmodel.PrefStatVM
 import com.messon.mess.app.presentation.viewmodel.PrefWindowVM
 import com.messon.mess.app.presentation.viewmodel.ScanStatVM
 import com.messon.mess.app.presentation.viewmodel.WindowTemplateVM
-import com.messon.mess.app.theme.CustomColors
 import com.messon.mess.app.theme.enterLeft
 import com.messon.mess.app.theme.exitRight
 import com.messon.mess.app.utils.Screen
@@ -97,7 +100,7 @@ fun AppNav(
             contentAlignment = Alignment.Center
         ) {
             CircularProgressIndicator(
-                color = CustomColors.RichCerulean,
+                color = MaterialTheme.colorScheme.primary,
                 strokeCap = StrokeCap.Round
             )
         }
@@ -155,7 +158,7 @@ fun AppNav(
         ){
             MainScreen(
                 onComplaintClick = {
-                    navController.navigate(Screen.MealPrefWindow.route)
+                    navController.navigate(Screen.ComplaintScreen.route)
                 },
                 onMessMenuClick = {
                     navController.navigate(Screen.ViewMessMenuScreen.route) {
@@ -166,7 +169,7 @@ fun AppNav(
                     navController.navigate(Screen.MessRuleScreen.route)
                 },
                 onNotificationsClick = {
-                    navController.navigate(Screen.ViewMessMenuScreen.route)
+                    navController.navigate(Screen.NotificationScreen.route)
                 },
                 couponViewModel = couponViewModel,
                 onViewDetail = { navController.navigate(Screen.CouponDetailScreen.route) },
@@ -178,6 +181,7 @@ fun AppNav(
                 onWindowTimingClick = { navController.navigate(Screen.WindowTemplateScreen.route) },
                 onPrefAnalyticsClick = { navController.navigate(Screen.PrefStatScreen.route) },
                 onScanAnalyticsClick = { navController.navigate(Screen.ScanAnalyticsScreen.route) },
+                onCouponStatusClick = {navController.navigate(Screen.CouponStatusScreen.route)},
                 scanStatVM = scanStatVM
             )
         }
@@ -315,6 +319,42 @@ fun AppNav(
             MealRatingScreen(
                 ratingVM =mealRatingVM,
                 onBackBtnClick = {navController.popBackStack()}
+            )
+        }
+
+        composable (
+            route=Screen.CouponStatusScreen.route,
+            enterTransition = enterLeft,
+            exitTransition = exitRight
+        ){
+            CouponStatusScreen(
+                onBackBtnClick = {
+                    navController.popBackStack()
+                }
+            )
+        }
+
+        composable (
+            route=Screen.ComplaintScreen.route,
+            enterTransition = enterLeft,
+            exitTransition = exitRight
+        ){
+            ComplaintScreen(
+                modifier = Modifier,
+                onBackBtnClick ={navController.popBackStack()} ,
+                onMarkAsReadBtnClick = {}
+            )
+        }
+
+        composable (
+            route=Screen.NotificationScreen.route,
+            enterTransition = enterLeft,
+            exitTransition = exitRight
+        ){
+            NotificationScreen(
+                modifier = Modifier,
+                onBackBtnClick ={navController.popBackStack()},
+                onFabClick = {}
             )
         }
 

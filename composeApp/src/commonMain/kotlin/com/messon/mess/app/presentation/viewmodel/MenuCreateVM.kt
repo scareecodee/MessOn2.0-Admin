@@ -64,27 +64,27 @@ class MenuCreateVM(
                                 MealSlot.BREAKFAST.value -> {
                                     dayMenu = dayMenu.copy(
                                         breakfast = if (m.mealType == MealType.VEG.value)
-                                            dayMenu.breakfast.copy(veg = m.dishes)
+                                            dayMenu.breakfast.copy(veg = m.dishes.orEmpty())
                                         else
-                                            dayMenu.breakfast.copy(nonVeg = m.dishes)
+                                            dayMenu.breakfast.copy(nonVeg = m.dishes.orEmpty())
                                     )
                                 }
 
                                 MealSlot.LUNCH.value -> {
                                     dayMenu = dayMenu.copy(
                                         lunch = if (m.mealType == MealType.VEG.value)
-                                            dayMenu.lunch.copy(veg = m.dishes)
+                                            dayMenu.lunch.copy(veg = m.dishes.orEmpty())
                                         else
-                                            dayMenu.lunch.copy(nonVeg = m.dishes)
+                                            dayMenu.lunch.copy(nonVeg = m.dishes.orEmpty())
                                     )
                                 }
 
                                 MealSlot.DINNER.value -> {
                                     dayMenu = dayMenu.copy(
                                         dinner = if (m.mealType == MealType.VEG.value)
-                                            dayMenu.dinner.copy(veg = m.dishes)
+                                            dayMenu.dinner.copy(veg = m.dishes.orEmpty())
                                         else
-                                            dayMenu.dinner.copy(nonVeg = m.dishes)
+                                            dayMenu.dinner.copy(nonVeg = m.dishes.orEmpty())
                                     )
                                 }
                             }
@@ -175,27 +175,27 @@ class MenuCreateVM(
                                 MealSlot.BREAKFAST.value -> {
                                     dayMenu = dayMenu.copy(
                                         breakfast = if (m.mealType == MealType.VEG.value)
-                                            dayMenu.breakfast.copy(veg = m.dishes)
+                                            dayMenu.breakfast.copy(veg = m.dishes.orEmpty())
                                         else
-                                            dayMenu.breakfast.copy(nonVeg = m.dishes)
+                                            dayMenu.breakfast.copy(nonVeg = m.dishes.orEmpty())
                                     )
                                 }
 
                                 MealSlot.LUNCH.value -> {
                                     dayMenu = dayMenu.copy(
                                         lunch = if (m.mealType == MealType.VEG.value)
-                                            dayMenu.lunch.copy(veg = m.dishes)
+                                            dayMenu.lunch.copy(veg = m.dishes.orEmpty())
                                         else
-                                            dayMenu.lunch.copy(nonVeg = m.dishes)
+                                            dayMenu.lunch.copy(nonVeg = m.dishes.orEmpty())
                                     )
                                 }
 
                                 MealSlot.DINNER.value -> {
                                     dayMenu = dayMenu.copy(
                                         dinner = if (m.mealType == MealType.VEG.value)
-                                            dayMenu.dinner.copy(veg = m.dishes)
+                                            dayMenu.dinner.copy(veg = m.dishes.orEmpty())
                                         else
-                                            dayMenu.dinner.copy(nonVeg = m.dishes)
+                                            dayMenu.dinner.copy(nonVeg = m.dishes.orEmpty())
                                     )
                                 }
                             }

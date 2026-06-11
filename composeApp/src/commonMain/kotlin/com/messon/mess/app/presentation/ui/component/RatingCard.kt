@@ -1,4 +1,5 @@
 package com.messon.mess.app.presentation.ui.component
+
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
@@ -20,7 +21,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
-import com.messon.mess.app.theme.CustomColors
 import com.messon.mess.app.utils.MealSlot
 import messon.composeapp.generated.resources.Res
 import messon.composeapp.generated.resources.publicsansmedium
@@ -43,7 +43,7 @@ fun RatingCard(
             .fillMaxWidth()
             .padding(8.dp),
         shape = RoundedCornerShape(24.dp),
-        colors = CardDefaults.cardColors(containerColor = Color.White),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
     ) {
         ConstraintLayout(
@@ -81,9 +81,9 @@ fun RatingCard(
 
             Text(
                 text = "Total Scans",
-                fontSize =14.sp,
+                fontSize = 14.sp,
                 fontFamily = FontFamily(Font(Res.font.publicsanssemibold)),
-                color = Color.LightGray,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
                 modifier = Modifier.constrainAs(totalLabel) {
                     top.linkTo(parent.top)
                     end.linkTo(parent.end)
@@ -91,10 +91,10 @@ fun RatingCard(
             )
 
             Text(
-                text =if(avgRating!=null) "$avgRating/${maxRating}" else "__",
+                text = if (avgRating != null) "$avgRating/${maxRating}" else "__",
                 fontSize = 20.sp,
                 fontFamily = FontFamily(Font(Res.font.publicsansregular)),
-                color = CustomColors.BlackberryCream,
+                color = MaterialTheme.colorScheme.onSurface,
                 modifier = Modifier.constrainAs(totalValue) {
                     top.linkTo(totalLabel.bottom, margin = 2.dp)
                     end.linkTo(parent.end)
@@ -102,10 +102,10 @@ fun RatingCard(
             )
 
             Text(
-                text =mealSlot.replaceFirstChar { it.uppercaseChar() },
-                fontSize =16.sp,
+                text = mealSlot.replaceFirstChar { it.uppercaseChar() },
+                fontSize = 16.sp,
                 fontFamily = FontFamily(Font(Res.font.publicsanssemibold)),
-                color = CustomColors.BlackberryCream,
+                color = MaterialTheme.colorScheme.onSurface,
                 modifier = Modifier.constrainAs(titleText) {
                     top.linkTo(iconBox.bottom, margin = 24.dp)
                     start.linkTo(parent.start)
@@ -123,14 +123,14 @@ fun RatingCard(
             ) {
                 StatProgressBar(
                     label = "Veg",
-                    barColor = CustomColors.RichCerulean,
+                    barColor = MaterialTheme.colorScheme.primary,
                     rating = vegRating,
                     maxRating = maxRating
                 )
 
                 StatProgressBar(
                     label = "Non-Veg",
-                    barColor = CustomColors.HoneyBronze,
+                    barColor = MaterialTheme.colorScheme.secondary, // Dynamic theme secondary (HoneyBronze in Light, DarkHoneyBronze in Dark)
                     rating = nonVegRating,
                     maxRating = maxRating
                 )
@@ -179,16 +179,16 @@ private fun StatProgressBar(
                 )
                 Text(
                     text = label,
-                    fontSize =12.sp,
+                    fontSize = 12.sp,
                     fontFamily = FontFamily(Font(Res.font.publicsansmedium)),
-                    color = Color.Gray,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
             }
             Text(
                 text = rating?.let { "$it / $maxRating" } ?: "No rating available",
-                fontSize =13.sp,
+                fontSize = 13.sp,
                 fontFamily = FontFamily(Font(Res.font.publicsansregular)),
-                color = if (rating == null) Color.Gray else barColor
+                color = if (rating == null) MaterialTheme.colorScheme.onSurfaceVariant else barColor
             )
         }
 
@@ -197,7 +197,7 @@ private fun StatProgressBar(
                 .fillMaxWidth()
                 .height(8.dp)
                 .clip(RoundedCornerShape(50))
-                .background(Color(0xFFF5F5F5))
+                .background(MaterialTheme.colorScheme.onSurface.copy(alpha = 0.08f))
         ) {
             Box(
                 modifier = Modifier

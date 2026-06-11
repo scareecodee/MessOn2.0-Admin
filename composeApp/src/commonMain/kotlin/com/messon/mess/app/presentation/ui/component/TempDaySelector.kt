@@ -13,6 +13,7 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -22,18 +23,13 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontFamily
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.messon.mess.app.presentation.ui.screens.mess.DaysOfWeek
-import com.messon.mess.app.theme.CustomColors
+import com.messon.mess.app.utils.WeekDay
 import messon.composeapp.generated.resources.Res
 import messon.composeapp.generated.resources.publicsansmedium
-import messon.composeapp.generated.resources.publicsanssemibold
 import org.jetbrains.compose.resources.Font
-
 
 @Composable
 fun TempDaySelector(
@@ -47,8 +43,13 @@ fun TempDaySelector(
         OutlinedCard(
             onClick = { expanded = true },
             shape = RoundedCornerShape(16.dp),
-            colors = CardDefaults.outlinedCardColors(containerColor = Color.White),
-            border = androidx.compose.foundation.BorderStroke(2.dp, CustomColors.RichCerulean),
+            // Replaced raw Color.White with adaptive MaterialTheme surface token
+            colors = CardDefaults.outlinedCardColors(containerColor = MaterialTheme.colorScheme.surface),
+            // Swapped custom static color with dynamic theme primary (Cerulean)
+            border = androidx.compose.foundation.BorderStroke(
+                width = 1.5.dp,
+                color = MaterialTheme.colorScheme.primary
+            ),
             modifier = Modifier.fillMaxWidth()
         ) {
             Row(
@@ -63,12 +64,14 @@ fun TempDaySelector(
                     fontSize = 14.sp,
                     fontFamily = FontFamily(Font(Res.font.publicsansmedium)),
                     maxLines = 1,
-                    color = CustomColors.BlackberryCream
+                    // Swapped custom color with theme onSurface for responsive readability
+                    color = MaterialTheme.colorScheme.onSurface
                 )
                 Icon(
                     imageVector = Icons.Default.KeyboardArrowDown,
                     contentDescription = null,
-                    tint = CustomColors.LightGrayBlue
+                    // Tinted with primary brand accent for high visual hierarchy
+                    tint = MaterialTheme.colorScheme.primary
                 )
             }
         }
@@ -77,22 +80,24 @@ fun TempDaySelector(
             expanded = expanded,
             onDismissRequest = { expanded = false },
             modifier = Modifier
-                .background(Color.White)
+                // Replaced solid Color.White background to ensure dark mode compatibility
+                .background(MaterialTheme.colorScheme.surface)
                 .fillMaxWidth(0.8f)
         ) {
-            DaysOfWeek.forEach { day ->
+            WeekDay.entries.forEach { day ->
                 DropdownMenuItem(
                     text = {
                         Text(
-                         text =day.replaceFirstChar { it.uppercaseChar() },
+                            text = day.value.replaceFirstChar { it.uppercaseChar() },
                             fontSize = 14.sp,
                             fontFamily = FontFamily(Font(Res.font.publicsansmedium)),
                             maxLines = 1,
+                            // High visibility dropdown text color
+                            color = MaterialTheme.colorScheme.onSurface
                         )
-
-                           },
+                    },
                     onClick = {
-                        onDaySelected(day)
+                        onDaySelected(day.value)
                         expanded = false
                     }
                 )

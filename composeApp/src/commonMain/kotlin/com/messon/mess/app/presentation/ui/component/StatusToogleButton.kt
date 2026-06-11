@@ -5,6 +5,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -15,23 +16,29 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.messon.mess.app.theme.CustomColors
 import messon.composeapp.generated.resources.Res
 import messon.composeapp.generated.resources.publicsansmedium
 import org.jetbrains.compose.resources.Font
 
 @Composable
 fun StatusToggleButton(
-    modifier: Modifier,
     label: String,
     isSelected: Boolean,
     activeColor: Color,
-    onClick: () -> Unit
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
 ) {
     val bgColor by animateColorAsState(if (isSelected) activeColor else Color.Transparent)
-    val textColor by animateColorAsState(if (isSelected) Color.White else CustomColors.BlackberryCream.copy(0.4f))
+    val textColor by animateColorAsState(
+        if (isSelected) {
+            Color.White
+        } else {
+            MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f)
+        }
+    )
+
     Box(
-        modifier =modifier
+        modifier = modifier
             .clip(CircleShape)
             .background(bgColor)
             .clickable { onClick() }

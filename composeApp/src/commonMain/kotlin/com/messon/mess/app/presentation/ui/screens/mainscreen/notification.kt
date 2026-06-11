@@ -17,7 +17,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
-import com.messon.mess.app.theme.CustomColors
 import messon.composeapp.generated.resources.Res
 import org.jetbrains.compose.resources.Font
 import androidx.compose.foundation.layout.Arrangement
@@ -32,6 +31,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.filled.ChevronLeft
 import androidx.compose.material.icons.outlined.Fastfood
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import com.messon.mess.app.presentation.ui.component.EachNotificationItem
 import messon.composeapp.generated.resources.publicsansbold
@@ -45,12 +45,13 @@ fun NotificationScreen(
 ){
     ConstraintLayout(
         modifier = modifier.fillMaxSize()
+            .background(MaterialTheme.colorScheme.background)
     ){
         val (statusBarBox,headingRef,listRef,backBtnRef,fabRef)=createRefs()
         Box(
             modifier = Modifier.fillMaxWidth()
                 .height(WindowInsets.safeDrawing.asPaddingValues().calculateTopPadding()+5.dp)
-                .background(CustomColors.LightGrayBlue)
+                .background(MaterialTheme.colorScheme.outline)
                 .constrainAs(statusBarBox){
                     top.linkTo(parent.top)
                     end.linkTo(parent.end)
@@ -68,6 +69,7 @@ fun NotificationScreen(
             Icon(
                 imageVector = Icons.Default.ChevronLeft,
                 contentDescription = "back btn",
+                tint =MaterialTheme.colorScheme.onSurface,
                 modifier = Modifier.size(28.dp)
             )
         }
@@ -76,6 +78,7 @@ fun NotificationScreen(
             maxLines = 1,
             text ="Notifications",
             fontSize = 22.sp,
+            color = MaterialTheme.colorScheme.onSurface,
             fontFamily = FontFamily(Font(Res.font.publicsansbold)),
             modifier = Modifier
                 .constrainAs(headingRef){
@@ -102,7 +105,7 @@ fun NotificationScreen(
                 EachNotificationItem(
                     subject = "Today's Special!Today's Special!Today's Special!Today's Special!",
                     description = "Hyderabadi Chicken Biryani will be served for Sunday Lunch. Don't miss it!" ,
-                    iconColor = CustomColors.RichCerulean.copy(0.7f),
+                    iconColor = MaterialTheme.colorScheme.primary.copy(0.7f),
                     modifier = Modifier,
                     createdTime = "10 min ago",
                     painter = rememberVectorPainter(Icons.Outlined.Fastfood),
@@ -114,7 +117,7 @@ fun NotificationScreen(
         FloatingActionButton(
             shape = CircleShape,
             onClick = onFabClick,
-            containerColor = CustomColors.RichCerulean,
+            containerColor = MaterialTheme.colorScheme.primary,
             contentColor = Color.White,
             elevation = FloatingActionButtonDefaults.elevation(
                 defaultElevation = 8.dp,

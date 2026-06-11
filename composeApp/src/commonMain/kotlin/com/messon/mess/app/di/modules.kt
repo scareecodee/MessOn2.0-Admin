@@ -48,7 +48,6 @@ val sharedModule = module {
     viewModel {
         AuthViewModel(
             secureStorage = get(),
-            dispatcher = get<AppDispatchers>().io,
             authRepository = get(),
             collegeRepository = get()
         )

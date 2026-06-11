@@ -1,5 +1,7 @@
 package com.messon.mess.app.presentation.ui.component
+
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -12,6 +14,7 @@ import androidx.compose.material.icons.filled.ChevronRight
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -36,15 +39,22 @@ fun TimingCard(
     icon: ImageVector,
     iconBgColor: Color,
     iconTint: Color,
-    onCardClick:()-> Unit
+    onCardClick: () -> Unit
 ) {
     Card(
         onClick = onCardClick,
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 12.dp, vertical = 8.dp),
+            .padding(horizontal = 12.dp, vertical = 8.dp)
+            .border(
+                width = 1.dp,
+                color = MaterialTheme.colorScheme.outline.copy(alpha = 0.15f), // Safe dynamic outer frame
+                shape = RoundedCornerShape(32.dp)
+            ),
         shape = RoundedCornerShape(32.dp),
-        colors = CardDefaults.cardColors(containerColor = Color.White),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surface // Adapts perfectly to dark & light backgrounds
+        ),
         elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
     ) {
         ConstraintLayout(
@@ -85,16 +95,16 @@ fun TimingCard(
             ) {
                 Text(
                     text = title,
-                    fontSize =13.sp,
+                    fontSize = 13.sp,
                     fontFamily = FontFamily(Font(Res.font.publicsanssemibold)),
-                    color = Color.LightGray,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant, // High visibility muted secondary color
                     letterSpacing = 1.sp
                 )
                 Text(
                     text = time,
-                    fontSize =12.sp,
+                    fontSize = 12.sp,
                     fontFamily = FontFamily(Font(Res.font.publicsansmedium)),
-                    color = Color(0xFF1F2937)
+                    color = MaterialTheme.colorScheme.onSurface // Dynamic system contrasting main content color
                 )
             }
 
@@ -102,6 +112,7 @@ fun TimingCard(
                 modifier = Modifier
                     .size(40.dp)
                     .clip(CircleShape)
+                    .background(MaterialTheme.colorScheme.onSurface.copy(alpha = 0.05f)) // Beautiful soft interactive circle pocket
                     .constrainAs(arrow) {
                         end.linkTo(parent.end)
                         top.linkTo(parent.top)
@@ -110,9 +121,9 @@ fun TimingCard(
                 contentAlignment = Alignment.Center
             ) {
                 Icon(
-                    Icons.Default.ChevronRight,
+                    imageVector = Icons.Default.ChevronRight,
                     contentDescription = null,
-                    tint = Color.LightGray,
+                    tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.8f), // Dynamic slate grey color
                     modifier = Modifier.size(20.dp)
                 )
             }

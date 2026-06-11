@@ -14,6 +14,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
@@ -27,34 +28,40 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.messon.mess.app.domain.dataModel.DateItem
-import com.messon.mess.app.theme.CustomColors
 import messon.composeapp.generated.resources.Res
 import messon.composeapp.generated.resources.publicsansbold
 import messon.composeapp.generated.resources.publicsansmedium
 import messon.composeapp.generated.resources.publicsanssemibold
 import org.jetbrains.compose.resources.Font
 
-
 @Composable
 fun DayDateChip(
     item: DateItem,
     isSelected: Boolean,
     onClick: () -> Unit,
-    accentColor: Color = CustomColors.RichCerulean,
+    // Dynamically defaults to Theme Primary to support both Light/Dark color systems
+    accentColor: Color = MaterialTheme.colorScheme.primary,
     modifier: Modifier = Modifier
 ) {
+    // Background transitions from accent color to surface background
     val backgroundColor by animateColorAsState(
-        targetValue = if (isSelected) accentColor else Color.White,
+        targetValue = if (isSelected) accentColor else MaterialTheme.colorScheme.surface,
         label = "bgColor"
     )
+
+    // Main text swaps between high-contrast white and dynamic theme text color
     val textColor by animateColorAsState(
-        targetValue = if (isSelected) Color.White else CustomColors.BlackberryCream,
+        targetValue = if (isSelected) Color.White else MaterialTheme.colorScheme.onSurface,
         label = "textColor"
     )
+
+    // Date circle background provides subtle glassmorphic contrast
     val dateCircleColor by animateColorAsState(
-        targetValue = if (isSelected) Color.White.copy(alpha = 0.2f) else CustomColors.OffWhite,
+        targetValue = if (isSelected) Color.White.copy(alpha = 0.2f) else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.06f),
         label = "circleColor"
     )
+
+    // Dynamic elevation profiles
     val elevation by animateDpAsState(
         targetValue = if (isSelected) 8.dp else 0.dp,
         animationSpec = spring(),
@@ -67,13 +74,13 @@ fun DayDateChip(
             .shadow(
                 elevation = elevation,
                 shape = RoundedCornerShape(100),
-                spotColor = accentColor.copy(alpha = 0.5f)
+                spotColor = accentColor.copy(alpha = 0.35f) // Softer glow shadow
             )
             .clip(RoundedCornerShape(100))
             .background(backgroundColor)
             .border(
                 width = 1.dp,
-                color = if (isSelected) accentColor else CustomColors.LightBlue,
+                color = if (isSelected) accentColor else MaterialTheme.colorScheme.outline.copy(alpha = 0.2f),
                 shape = RoundedCornerShape(100)
             )
             .clickable { onClick() },
@@ -103,7 +110,7 @@ fun DayDateChip(
             Column(verticalArrangement = Arrangement.Center) {
                 Text(
                     text = item.day.uppercase().take(3),
-                    color = if (isSelected) Color.White.copy(alpha = 0.7f) else CustomColors.LightGrayBlue,
+                    color = if (isSelected) Color.White.copy(alpha = 0.7f) else MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.8f),
                     fontSize = 10.sp,
                     fontFamily = FontFamily(Font(Res.font.publicsansmedium)),
                     letterSpacing = 1.sp
@@ -128,13 +135,13 @@ fun DayDateChip(
     }
 }
 
-
 @Composable
 fun PillSelectorStrip(
     dates: List<DateItem>,
     selectedId: String,
     onDateSelected: (String) -> Unit,
-    accentColor: Color = CustomColors.RichCerulean
+    // Dynamically defaults to Theme Primary to support both Light/Dark color systems
+    accentColor: Color = MaterialTheme.colorScheme.primary
 ) {
     LazyRow(
         contentPadding = PaddingValues(horizontal = 16.dp),

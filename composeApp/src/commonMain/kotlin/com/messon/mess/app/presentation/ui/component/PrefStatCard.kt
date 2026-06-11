@@ -1,4 +1,5 @@
 package com.messon.mess.app.presentation.ui.component
+
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -16,6 +17,7 @@ import androidx.compose.material.icons.filled.Coffee
 import androidx.compose.material.icons.filled.NightsStay
 import androidx.compose.material.icons.filled.WbSunny
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -30,8 +32,6 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import com.messon.mess.app.domain.dataModel.EachDayPrefStat
 import com.messon.mess.app.domain.dataModel.EachSlotPrefStat
-import com.messon.mess.app.theme.CustomColors
-import com.messon.mess.app.utils.toLocalTimeSafe
 import messon.composeapp.generated.resources.Res
 import messon.composeapp.generated.resources.publicsansmedium
 import messon.composeapp.generated.resources.publicsansregular
@@ -43,8 +43,14 @@ fun PrefStatCard(day: EachDayPrefStat) {
     ConstraintLayout(
         modifier = Modifier
             .fillMaxWidth()
+            .padding(horizontal = 14.dp)
             .clip(RoundedCornerShape(30.dp))
-            .background(Color.White)
+            .background(MaterialTheme.colorScheme.surface)
+            .border(
+                width = 1.dp,
+                color = MaterialTheme.colorScheme.outline.copy(alpha = 0.15f),
+                shape = RoundedCornerShape(30.dp)
+            )
     ) {
         val (header, mealList, footer) = createRefs()
 
@@ -68,13 +74,13 @@ fun PrefStatCard(day: EachDayPrefStat) {
                         text = day.day.replaceFirstChar { it.uppercaseChar() },
                         fontSize = 20.sp,
                         fontFamily = FontFamily(Font(Res.font.publicsanssemibold)),
-                        color = Color.Black
+                        color = MaterialTheme.colorScheme.onSurface // Dynamic primary header text
                     )
                     Text(
                         text = day.date,
                         fontSize = 12.sp,
                         fontFamily = FontFamily(Font(Res.font.publicsansregular)),
-                        color = Color.Black
+                        color = MaterialTheme.colorScheme.onSurfaceVariant // Muted secondary subtext
                     )
                 }
             }
@@ -83,38 +89,49 @@ fun PrefStatCard(day: EachDayPrefStat) {
         Column(
             modifier = Modifier
                 .padding(horizontal = 20.dp)
+                .padding(bottom = 20.dp)
                 .constrainAs(mealList) {
                     top.linkTo(header.bottom)
                     start.linkTo(parent.start)
                     end.linkTo(parent.end)
-                    width= Dimension.fillToConstraints
+                    width = Dimension.fillToConstraints
                 },
             verticalArrangement = Arrangement.spacedBy(14.dp)
         ) {
             MealEntry(
-                label = "Breakfast", icon = Icons.Default.Coffee, data = day.breakfastStat,
-                color = CustomColors.RichCerulean
+                label = "Breakfast",
+                icon = Icons.Default.Coffee,
+                data = day.breakfastStat,
+                color = MaterialTheme.colorScheme.primary
             )
             MealEntry(
-                label = "Lunch", icon = Icons.Default.WbSunny, data = day.lunchStat,
-                color = CustomColors.HoneyBronze
+                label = "Lunch",
+                icon = Icons.Default.WbSunny,
+                data = day.lunchStat,
+                color = MaterialTheme.colorScheme.secondary
             )
             MealEntry(
-                label = "Dinner", icon = Icons.Default.NightsStay, data = day.dinnerStat,
-                color = CustomColors.BlackberryCream
+                label = "Dinner",
+                icon = Icons.Default.NightsStay,
+                data = day.dinnerStat,
+                color = MaterialTheme.colorScheme.tertiary
             )
         }
     }
 }
 
-
 @Composable
-fun MealEntry(label: String, icon: ImageVector, data: EachSlotPrefStat,color: Color) {
+fun MealEntry(label: String, icon: ImageVector, data: EachSlotPrefStat, color: Color) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .clip(RoundedCornerShape(28.dp))
-            .background(CustomColors.RichCerulean.copy(0.05f))
+            .background(color.copy(alpha = 0.08f))
+            .border(
+                width = 1.dp,
+                color = color.copy(alpha = 0.15f),
+                shape = RoundedCornerShape(28.dp)
+            )
             .padding(vertical = 12.dp, horizontal = 10.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -122,11 +139,20 @@ fun MealEntry(label: String, icon: ImageVector, data: EachSlotPrefStat,color: Co
             modifier = Modifier
                 .size(52.dp)
                 .clip(RoundedCornerShape(16.dp))
-                .background(Color.White)
-                .border(0.1.dp, Color.Black, RoundedCornerShape(16.dp)),
+                .background(MaterialTheme.colorScheme.surface) // Adaptive surface inner capsule
+                .border(
+                    width = 1.dp,
+                    color = MaterialTheme.colorScheme.outline.copy(alpha = 0.2f),
+                    shape = RoundedCornerShape(16.dp)
+                ),
             contentAlignment = Alignment.Center
         ) {
-            Icon(icon, contentDescription = null, tint = color, modifier = Modifier.size(22.dp))
+            Icon(
+                imageVector = icon,
+                contentDescription = null,
+                tint = color,
+                modifier = Modifier.size(22.dp)
+            )
         }
 
         Spacer(modifier = Modifier.width(16.dp))
@@ -134,14 +160,23 @@ fun MealEntry(label: String, icon: ImageVector, data: EachSlotPrefStat,color: Co
         Text(
             text = label,
             modifier = Modifier.weight(1f),
-            fontSize =12.sp,
-            fontFamily = FontFamily(Font(Res.font.publicsansmedium)),
-            color = Color.Black
+            fontSize = 13.sp,
+            fontFamily = FontFamily(Font(Res.font.publicsanssemibold)), // Swapped to semibold for modern readability
+            color = MaterialTheme.colorScheme.onSurface
         )
 
-        MealCountBadge(tag = "V", count = data.vegCount?:0, color = CustomColors.RichCerulean)
+        // Dynamic badges mapping to cohesive accent colors
+        MealCountBadge(
+            tag = "V",
+            count = data.vegCount ?: 0,
+            color = MaterialTheme.colorScheme.primary
+        )
         Spacer(modifier = Modifier.width(8.dp))
-        MealCountBadge(tag = "NV", count = data.nonVegCount?:0, color = CustomColors.HoneyBronze)
+        MealCountBadge(
+            tag = "NV",
+            count = data.nonVegCount ?: 0,
+            color = MaterialTheme.colorScheme.secondary
+        )
     }
 }
 
@@ -151,20 +186,26 @@ fun MealCountBadge(tag: String, count: Int, color: Color) {
         modifier = Modifier
             .width(56.dp)
             .clip(RoundedCornerShape(14.dp))
-            .background(Color.White)
-            .border(1.dp, Color(0xFFF1F5F9), RoundedCornerShape(14.dp))
+            .background(MaterialTheme.colorScheme.surface) // Adaptive backing
+            .border(
+                width = 1.dp,
+                color = MaterialTheme.colorScheme.outline.copy(alpha = 0.3f),
+                shape = RoundedCornerShape(14.dp)
+            )
             .padding(vertical = 6.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
-            tag,
-            color = Color.LightGray,
-            fontSize =10.sp,
+            text = tag,
+            color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.8f), // Dynamic unselected subtext
+            fontSize = 10.sp,
             fontFamily = FontFamily(Font(Res.font.publicsanssemibold)),
         )
-        Text(count.toString(), fontSize = 12.sp,
+        Text(
+            text = count.toString(),
+            fontSize = 13.sp,
             fontFamily = FontFamily(Font(Res.font.publicsansmedium)),
-            color = color
+            color = color // Dynamic category badge number (Primary for Veg, Secondary for Non-Veg)
         )
     }
 }

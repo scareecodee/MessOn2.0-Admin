@@ -8,6 +8,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
@@ -19,7 +20,6 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.messon.mess.app.theme.CustomColors
 import messon.composeapp.generated.resources.Res
 import messon.composeapp.generated.resources.publicsansregular
 import messon.composeapp.generated.resources.publicsanssemibold
@@ -39,7 +39,7 @@ fun CustomInputField(
             text = label,
             fontSize = 14.sp,
             fontFamily = FontFamily(Font(Res.font.publicsanssemibold)),
-            color = CustomColors.BlackberryCream,
+            color = MaterialTheme.colorScheme.onBackground,
             modifier = Modifier.padding(start = 4.dp, bottom = 6.dp)
         )
         OutlinedTextField(
@@ -51,14 +51,14 @@ fun CustomInputField(
                 Icon(
                     imageVector = icon,
                     contentDescription = null,
-                    tint = CustomColors.LightGrayBlue
+                    tint = MaterialTheme.colorScheme.outline
                 )
             },
             colors = OutlinedTextFieldDefaults.colors(
-                focusedBorderColor = CustomColors.RichCerulean,
-                unfocusedBorderColor = CustomColors.LightGrayBlue.copy(alpha = 0.5f),
-                focusedTextColor = CustomColors.BlackberryCream,
-                unfocusedTextColor = CustomColors.BlackberryCream
+                focusedBorderColor = MaterialTheme.colorScheme.primary,
+                unfocusedBorderColor = MaterialTheme.colorScheme.outline.copy(alpha = 0.5f),
+                focusedTextColor = MaterialTheme.colorScheme.onBackground,
+                unfocusedTextColor = MaterialTheme.colorScheme.onBackground
             ),
             textStyle = TextStyle(
                 fontSize = 12.sp,

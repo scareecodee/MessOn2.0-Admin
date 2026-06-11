@@ -3,7 +3,7 @@ data class Menu(
     val day: String,
     val mealSlot: String,
     val mealType: String,
-    val dishes: String
+    val dishes: String?
 )
 
 

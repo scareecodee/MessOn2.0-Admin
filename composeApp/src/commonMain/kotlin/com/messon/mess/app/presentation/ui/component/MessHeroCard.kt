@@ -1,4 +1,5 @@
 package com.messon.mess.app.presentation.ui.component
+
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -13,6 +14,7 @@ import androidx.compose.material.icons.filled.Restaurant
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -24,7 +26,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
-import com.messon.mess.app.theme.CustomColors
 import messon.composeapp.generated.resources.Res
 import messon.composeapp.generated.resources.publicsansbold
 import messon.composeapp.generated.resources.publicsansmedium
@@ -32,14 +33,15 @@ import messon.composeapp.generated.resources.publicsanssemibold
 import org.jetbrains.compose.resources.Font
 
 @Composable
-fun MessHeroCard(name: String, location: String,modifier: Modifier) {
+fun MessHeroCard(name: String, location: String, modifier: Modifier) {
     Card(
         modifier = modifier
             .height(160.dp)
             .fillMaxWidth()
-            .padding(start =12.dp, end = 12.dp),
+            .padding(start = 12.dp, end = 12.dp),
         shape = RoundedCornerShape(40.dp),
-        colors = CardDefaults.cardColors(containerColor = Color.White),
+        // Swapped absolute White container with standard Material 3 surface token
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
     ) {
         ConstraintLayout(
@@ -48,6 +50,8 @@ fun MessHeroCard(name: String, location: String,modifier: Modifier) {
                 .padding(32.dp)
         ) {
             val (locTag, title, subtitle, bgIcon) = createRefs()
+
+            // High-end background accent blending cleanly with the underlying context
             Icon(
                 imageVector = Icons.Default.Restaurant,
                 contentDescription = null,
@@ -58,7 +62,8 @@ fun MessHeroCard(name: String, location: String,modifier: Modifier) {
                         top.linkTo(parent.top, margin = (-20).dp)
                         end.linkTo(parent.end, margin = (-20).dp)
                     },
-                tint = CustomColors.BlackberryCream
+                // Replaced legacy Blackberry Cream color with responsive theme accent
+                tint = MaterialTheme.colorScheme.onSurface
             )
 
             Row(
@@ -71,7 +76,8 @@ fun MessHeroCard(name: String, location: String,modifier: Modifier) {
                 Icon(
                     Icons.Default.Place,
                     contentDescription = null,
-                    tint = CustomColors.RichCerulean,
+                    // Safe primary highlight tint
+                    tint = MaterialTheme.colorScheme.primary,
                     modifier = Modifier.size(12.dp)
                 )
                 Spacer(modifier = Modifier.width(4.dp))
@@ -79,7 +85,8 @@ fun MessHeroCard(name: String, location: String,modifier: Modifier) {
                     text = location,
                     fontSize = 12.sp,
                     fontFamily = FontFamily(Font(Res.font.publicsanssemibold)),
-                    color = CustomColors.RichCerulean,
+                    // Clean dynamic contrast color
+                    color = MaterialTheme.colorScheme.primary,
                 )
             }
 
@@ -87,7 +94,8 @@ fun MessHeroCard(name: String, location: String,modifier: Modifier) {
                 text = name,
                 fontSize = 14.sp,
                 fontFamily = FontFamily(Font(Res.font.publicsansbold)),
-                color = Color.Black,
+                // Adapts automatically to ensure absolute legibility under both system themes
+                color = MaterialTheme.colorScheme.onSurface,
                 modifier = Modifier.constrainAs(title) {
                     top.linkTo(locTag.bottom, 8.dp)
                     start.linkTo(parent.start)
@@ -100,7 +108,8 @@ fun MessHeroCard(name: String, location: String,modifier: Modifier) {
                 text = "Schedule Management",
                 fontSize = 12.sp,
                 fontFamily = FontFamily(Font(Res.font.publicsansmedium)),
-                color = Color.LightGray,
+                // Changed absolute light grey to dynamic descriptive secondary gray token
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
                 letterSpacing = 1.sp,
                 modifier = Modifier.constrainAs(subtitle) {
                     top.linkTo(title.bottom, 8.dp)
@@ -110,4 +119,3 @@ fun MessHeroCard(name: String, location: String,modifier: Modifier) {
         }
     }
 }
-

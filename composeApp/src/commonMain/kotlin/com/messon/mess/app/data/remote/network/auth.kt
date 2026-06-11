@@ -15,7 +15,7 @@ import io.ktor.util.network.UnresolvedAddressException
 import kotlinx.serialization.SerializationException
 
 
-private const val BASE_URL = "http://172.18.9.63:8000/"
+private const val BASE_URL ="https://messon2-0-backend-testingv1.onrender.com/"
 
 
 

@@ -17,7 +17,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import com.messon.mess.app.theme.CustomColors
 import messon.composeapp.generated.resources.Res
 import messon.composeapp.generated.resources.publicsanssemibold
 import multiplatform.network.cmptoast.showToast
@@ -52,6 +51,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.unit.sp
+import com.messon.mess.app.theme.MessonTheme
 
 
 @Suppress("SuspiciousIndentation")
@@ -88,8 +88,8 @@ fun ScannerScreen(
         QrScanner(
             modifier = Modifier.fillMaxSize(),
             overlayBorderColor =
-                if (scanEnabled) CustomColors.LightBlue
-                else CustomColors.HoneyBronze,
+                if (scanEnabled) MessonTheme.colors.infoContainer
+                else MaterialTheme.colorScheme.secondary,
             flashlightOn = flashlightOn,
             cameraLens = CameraLens.Back,
             openImagePicker = false,
@@ -180,7 +180,7 @@ fun ScannerScreen(
 
                     if (couponVerificationState is CouponVerificationState.Loading) {
                         CircularProgressIndicator(
-                            color = CustomColors.RichCerulean,
+                            color = MaterialTheme.colorScheme.primary,
                             modifier = Modifier.size(50.dp),
                             strokeWidth = 4.dp
                         )
@@ -223,7 +223,7 @@ fun ScannerScreen(
                         modifier = Modifier
                             .size(56.dp)
                             .background(
-                                color = if (flashlightOn) CustomColors.HoneyBronze else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.1f),
+                                color = if (flashlightOn) MaterialTheme.colorScheme.secondary else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.1f),
                                 shape = CircleShape
                             )
                     ) {
@@ -246,9 +246,9 @@ fun ScannerScreen(
                                 },
                                 modifier = Modifier.height(50.dp),
                                 shape = RoundedCornerShape(30.dp),
-                                border = BorderStroke(1.5.dp, CustomColors.HoneyBronze),
+                                border = BorderStroke(1.5.dp, MaterialTheme.colorScheme.secondary),
                                 colors = ButtonDefaults.outlinedButtonColors(
-                                    contentColor = CustomColors.HoneyBronze
+                                    contentColor = MaterialTheme.colorScheme.secondary
                                 )
                             ) {
                                 Text(
@@ -276,13 +276,13 @@ fun ScannerScreen(
                             if (scannedQrJson != null)
                                 Modifier.border(
                                     1.dp,
-                                    CustomColors.RichCerulean,
+                                    MaterialTheme.colorScheme.primary,
                                     RoundedCornerShape(30.dp)
                                 )
                             else Modifier
                         ),
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = CustomColors.RichCerulean,
+                        containerColor = MaterialTheme.colorScheme.primary,
                         disabledContainerColor = Color.LightGray.copy(alpha = 0.4f)
                     ),
                     shape = RoundedCornerShape(30.dp)

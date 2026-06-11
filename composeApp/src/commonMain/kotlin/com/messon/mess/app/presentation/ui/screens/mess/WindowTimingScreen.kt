@@ -19,7 +19,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
-import com.messon.mess.app.theme.CustomColors
 import network.chaintech.kmp_date_time_picker.ui.datetimepicker.WheelDateTimePickerView
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
@@ -29,6 +28,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import com.messon.mess.app.presentation.ui.component.TimeRow
 import com.messon.mess.app.presentation.ui.state.PrefWindowState
 import com.messon.mess.app.presentation.viewmodel.PrefWindowVM
+import com.messon.mess.app.theme.MessonTheme
 import com.messon.mess.app.utils.WeekType
 import com.messon.mess.app.utils.toHumanReadable
 import messon.composeapp.generated.resources.Res
@@ -86,7 +86,7 @@ fun MealPrefWindow(
 
     ConstraintLayout(
         modifier = Modifier.fillMaxSize()
-            .background(CustomColors.OffWhite)
+            .background(MaterialTheme.colorScheme.background)
     ) {
 
         val (headerBg, topBar, titleSection,listRef) = createRefs()
@@ -99,7 +99,7 @@ fun MealPrefWindow(
                     top.linkTo(parent.top)
                 }
                 .clip(RoundedCornerShape(bottomStart = 48.dp, bottomEnd = 48.dp))
-                .background(CustomColors.RichCerulean.copy(0.9f))
+                .background(MaterialTheme.colorScheme.primary.copy(0.9f))
         )
 
         Row(
@@ -193,7 +193,7 @@ fun MealPrefWindow(
                                     modifier = Modifier
                                         .size(44.dp)
                                         .background(
-                                            CustomColors.LightBlue,
+                                            MessonTheme.colors.infoContainer,
                                             RoundedCornerShape(16.dp)
                                         ),
                                     contentAlignment = Alignment.Center
@@ -201,7 +201,7 @@ fun MealPrefWindow(
                                     Icon(
                                         Icons.Default.Settings,
                                         null,
-                                        tint = CustomColors.RichCerulean
+                                        tint = MaterialTheme.colorScheme.primary
                                     )
                                 }
 
@@ -213,19 +213,19 @@ fun MealPrefWindow(
                                         fontSize = 14.sp,
                                         fontFamily = FontFamily(Font(Res.font.publicsansbold)),
                                         maxLines = 1,
+                                        color = MaterialTheme.colorScheme.onSurface,
                                         overflow = TextOverflow.Ellipsis
                                     )
                                     Text(
                                         "Global Sync",
                                         fontSize = 10.sp,
                                         fontFamily = FontFamily(Font(Res.font.publicsansregular)),
-                                        color = Color.Gray
-                                    )
+                                        color = MaterialTheme.colorScheme.onSurfaceVariant                                    )
                                 }
                             }
 
                             Surface(
-                                color = CustomColors.HoneyBronze.copy(0.1f),
+                                color = MaterialTheme.colorScheme.secondary.copy(0.1f),
                                 shape = RoundedCornerShape(50)
                             ) {
                                 Text(
@@ -236,7 +236,7 @@ fun MealPrefWindow(
                                     ),
                                     fontSize = 12.sp,
                                     fontFamily = FontFamily(Font(Res.font.publicsansmedium)),
-                                    color = CustomColors.HoneyBronze
+                                    color = MaterialTheme.colorScheme.secondary
                                 )
                             }
                         }
@@ -247,7 +247,7 @@ fun MealPrefWindow(
                             label = "Opening",
                             time = openingTime?.toHumanReadable() ?: "--",
                             icon = Icons.Default.CalendarToday,
-                            iconColor = CustomColors.HoneyBronze,
+                            iconColor = MaterialTheme.colorScheme.primary,
                             onClick = {
                                 showDateTimePicker = true
                                 isClosingSelected = false
@@ -260,7 +260,7 @@ fun MealPrefWindow(
                             label = "Closing",
                             time = closingTime?.toHumanReadable() ?: "--",
                             icon = Icons.Default.Schedule,
-                            iconColor = CustomColors.RichCerulean,
+                            iconColor = MaterialTheme.colorScheme.primary,
                             onClick =
                                 {
                                     showDateTimePicker = true
@@ -291,7 +291,7 @@ fun MealPrefWindow(
                         Icon(
                             Icons.Default.Info,
                             null,
-                            tint = CustomColors.RichCerulean,
+                            tint = MaterialTheme.colorScheme.primary,
                             modifier = Modifier.size(30.dp)
                         )
                     }
@@ -304,7 +304,7 @@ fun MealPrefWindow(
                             "Admin Tip",
                             fontSize = 14.sp,
                             fontFamily = FontFamily(Font(Res.font.publicsanssemibold)),
-                            color = CustomColors.BlackberryCream
+                            color = MaterialTheme.colorScheme.onBackground
                         )
 
                         Text(
@@ -330,8 +330,8 @@ fun MealPrefWindow(
                         .padding(horizontal = 24.dp),
                     shape = RoundedCornerShape(30.dp),
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = CustomColors.RichCerulean,
-                        disabledContainerColor = CustomColors.RichCerulean
+                        containerColor = MaterialTheme.colorScheme.primary,
+                        disabledContainerColor = MaterialTheme.colorScheme.primary
                     )
                 ) {
 
@@ -375,7 +375,7 @@ fun MealPrefWindow(
         ),
         selectorProperties = WheelPickerDefaults.selectorProperties(
             enabled=true,
-            borderColor = CustomColors.RichCerulean
+            borderColor = MaterialTheme.colorScheme.primary
         ),
         onDoneClick = {
             showDateTimePicker=false

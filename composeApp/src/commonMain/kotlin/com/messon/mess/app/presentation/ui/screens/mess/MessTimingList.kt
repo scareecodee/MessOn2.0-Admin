@@ -1,4 +1,5 @@
 package com.messon.mess.app.presentation.ui.screens.mess
+
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -11,9 +12,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontFamily
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
@@ -23,8 +22,7 @@ import com.messon.mess.app.presentation.ui.component.MessHeroCard
 import com.messon.mess.app.presentation.ui.component.TimingCard
 import com.messon.mess.app.presentation.ui.state.MessTimingState
 import com.messon.mess.app.presentation.viewmodel.MessTimingVM
-import com.messon.mess.app.theme.CustomColors
-import com.messon.mess.app.theme.CustomColors.LightGrayBlue
+import com.messon.mess.app.theme.MessonTheme
 import com.messon.mess.app.utils.MealSlot
 import com.messon.mess.app.utils.toDisplayTime
 import messon.composeapp.generated.resources.Res
@@ -35,63 +33,54 @@ import org.jetbrains.compose.resources.Font
 
 @Composable
 fun MessTimingScreen(
-    onBackBtnClick:()-> Unit,
-    onCardClick:()-> Unit,
+    onBackBtnClick: () -> Unit,
+    onCardClick: () -> Unit,
     messTimingVM: MessTimingVM
 ) {
-
     val fetchTimingState by messTimingVM.fetchState.collectAsState()
+    val colors = MaterialTheme.colorScheme
+    val messonColors = MessonTheme.colors
 
-    LaunchedEffect(Unit){
+    LaunchedEffect(Unit) {
         messTimingVM.fetchMessTiming()
     }
-    LaunchedEffect(fetchTimingState){
-        when(fetchTimingState){
+    LaunchedEffect(fetchTimingState) {
+        when (fetchTimingState) {
             is MessTimingState.Error -> {
                 showToast(message = (fetchTimingState as MessTimingState.Error).message)
                 messTimingVM.clearFetchState()
             }
-
             else -> {}
         }
     }
 
-
     ConstraintLayout(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(CustomColors.OffWhite)
+        modifier = Modifier.fillMaxSize().background(colors.background)
     ) {
-        val ( list,heroCardRef,statusBarBox,backBtnRef,headingRef,progressIndicator) = createRefs()
+        val (list, heroCardRef, statusBarBox, backBtnRef, headingRef, progressIndicator) = createRefs()
 
         Box(
             Modifier
                 .fillMaxWidth()
                 .height(WindowInsets.safeDrawing.asPaddingValues().calculateTopPadding() + 5.dp)
-                .background(LightGrayBlue)
-                .constrainAs(statusBarBox) {
-                    top.linkTo(parent.top)
-                }
+                .background(messonColors.divider)
+                .constrainAs(statusBarBox) { top.linkTo(parent.top) }
         )
 
-
         IconButton(
-            onClick = {
-                onBackBtnClick()
-            },
+            onClick = { onBackBtnClick() },
             modifier = Modifier.constrainAs(backBtnRef) {
                 start.linkTo(parent.start, 15.dp)
                 top.linkTo(statusBarBox.bottom, 10.dp)
             }
         ) {
-            Icon(Icons.Default.ChevronLeft, contentDescription = "back", modifier = Modifier.size(28.dp)
-            )
+            Icon(Icons.Default.ChevronLeft, contentDescription = "back", tint = colors.onSurface, modifier = Modifier.size(28.dp))
         }
-
 
         Text(
             text = "Mess Timing",
             fontSize = 18.sp,
+            color = colors.onSurface,
             fontFamily = FontFamily(Font(Res.font.publicsansbold)),
             modifier = Modifier.constrainAs(headingRef) {
                 start.linkTo(backBtnRef.end, 5.dp)
@@ -102,17 +91,16 @@ fun MessTimingScreen(
         MessHeroCard(
             name = "Main Campus Mess",
             location = "Central Block, Ground Floor",
-            modifier = Modifier.constrainAs(heroCardRef){
+            modifier = Modifier.constrainAs(heroCardRef) {
                 top.linkTo(backBtnRef.bottom, margin = 12.dp)
                 start.linkTo(parent.start)
                 end.linkTo(parent.end)
             },
         )
 
-
-        if(fetchTimingState is MessTimingState.Loading ){
+        if (fetchTimingState is MessTimingState.Loading) {
             CircularProgressIndicator(
-                modifier = Modifier.constrainAs(progressIndicator){
+                modifier = Modifier.constrainAs(progressIndicator) {
                     start.linkTo(parent.start)
                     end.linkTo(parent.end)
                     top.linkTo(heroCardRef.bottom, margin = 10.dp)
@@ -121,41 +109,35 @@ fun MessTimingScreen(
             )
         }
 
-        if(fetchTimingState is MessTimingState.Success){
+        if (fetchTimingState is MessTimingState.Success) {
             val data = (fetchTimingState as MessTimingState.Success).messTiming
             val breakfast = data.getBySlot(MealSlot.BREAKFAST.value)
             val lunch = data.getBySlot(MealSlot.LUNCH.value)
             val dinner = data.getBySlot(MealSlot.DINNER.value)
             LazyColumn(
                 modifier = Modifier.fillMaxSize()
-                    .constrainAs(list){
+                    .constrainAs(list) {
                         top.linkTo(heroCardRef.bottom, margin = 10.dp)
                         bottom.linkTo(parent.bottom)
                         start.linkTo(parent.start)
                         end.linkTo(parent.end)
-                        width= Dimension.fillToConstraints
-                        height= Dimension.fillToConstraints
+                        width = Dimension.fillToConstraints
+                        height = Dimension.fillToConstraints
                     },
                 contentPadding = PaddingValues(bottom = 32.dp)
             ) {
-
                 item {
                     Row(
                         modifier = Modifier.padding(horizontal = 32.dp, vertical = 8.dp),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Icon(
-                            Icons.Default.Info,
-                            contentDescription = null,
-                            modifier = Modifier.size(14.dp),
-                            tint =Color.LightGray
-                        )
+                        Icon(Icons.Default.Info, contentDescription = null, modifier = Modifier.size(14.dp), tint = colors.outline)
                         Spacer(modifier = Modifier.width(8.dp))
                         Text(
                             text = "INTERVALS",
                             fontSize = 12.sp,
                             fontFamily = FontFamily(Font(Res.font.publicsanssemibold)),
-                            color = Color.LightGray,
+                            color = colors.outline,
                         )
                     }
                 }
@@ -163,10 +145,10 @@ fun MessTimingScreen(
                 item {
                     TimingCard(
                         title = MealSlot.BREAKFAST.value.replaceFirstChar { it.uppercaseChar() },
-                        time =breakfast?.toDisplayTime()?:"__",
+                        time = breakfast?.toDisplayTime() ?: "__",
                         icon = Icons.Default.Coffee,
-                        iconBgColor = CustomColors.LightBlue,
-                        iconTint = CustomColors.RichCerulean,
+                        iconBgColor =  colors.primary.copy(0.1f),
+                        iconTint = colors.primary,
                         onCardClick = {
                             messTimingVM.setMealSlot(MealSlot.BREAKFAST.value)
                             onCardClick()
@@ -176,10 +158,10 @@ fun MessTimingScreen(
                 item {
                     TimingCard(
                         title = MealSlot.LUNCH.value.replaceFirstChar { it.uppercaseChar() },
-                        time =lunch?.toDisplayTime()?:"__",
+                        time = lunch?.toDisplayTime() ?: "__",
                         icon = Icons.Default.WbSunny,
-                        iconBgColor = CustomColors.Cream,
-                        iconTint = CustomColors.HoneyBronze,
+                        iconBgColor = messonColors.warningContainer,
+                        iconTint = MaterialTheme.colorScheme.secondary,
                         onCardClick = {
                             messTimingVM.setMealSlot(MealSlot.LUNCH.value)
                             onCardClick()
@@ -189,10 +171,10 @@ fun MessTimingScreen(
                 item {
                     TimingCard(
                         title = MealSlot.DINNER.value.replaceFirstChar { it.uppercaseChar() },
-                        time =dinner?.toDisplayTime()?:"__",
+                        time = dinner?.toDisplayTime() ?: "__",
                         icon = Icons.Default.NightsStay,
-                        iconBgColor = CustomColors.LightLavender,
-                        iconTint = CustomColors.BlackberryCream,
+                        iconBgColor = MaterialTheme.colorScheme.surfaceVariant,
+                        iconTint = colors.onSurfaceVariant,
                         onCardClick = {
                             messTimingVM.setMealSlot(MealSlot.DINNER.value)
                             onCardClick()

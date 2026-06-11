@@ -14,6 +14,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -24,7 +25,6 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.messon.mess.app.theme.CustomColors
 import messon.composeapp.generated.resources.Res
 import messon.composeapp.generated.resources.publicsansmedium
 import messon.composeapp.generated.resources.publicsanssemibold
@@ -34,10 +34,13 @@ import org.jetbrains.compose.resources.Font
 fun MealCard(
     mealSlot: String,
     dishes: String,
-    tint: Color,
-    accent: Color,
+    tint: Color, // Pass e.g., MaterialTheme.customColors.infoContainer
+    accent: Color, // Pass e.g., your primary color or a specific icon color
     icon: ImageVector
 ) {
+    // Access your custom theme extensions here
+    val colors = MaterialTheme.colorScheme
+
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -46,9 +49,11 @@ fun MealCard(
         Card(
             modifier = Modifier.fillMaxWidth(),
             shape = RoundedCornerShape(38.dp),
-            colors = CardDefaults.cardColors(containerColor = Color.White),
-            border = BorderStroke(1.dp, Color.LightGray.copy(0.1f)),
-            elevation = CardDefaults.cardElevation(1.5.dp)
+            // Use 'surface' for the card background so it adapts to dark mode
+            colors = CardDefaults.cardColors(containerColor = colors.surface),
+            // Use 'outline' color with low alpha for a subtle professional border
+            border = BorderStroke(1.dp, colors.outline.copy(alpha = 0.2f)),
+            elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
         ) {
             Row(
                 modifier = Modifier.padding(12.dp),
@@ -69,20 +74,20 @@ fun MealCard(
                 Column(modifier = Modifier.weight(1f)) {
                     Text(
                         mealSlot,
-                        fontSize =12.sp,
+                        fontSize = 12.sp,
                         fontFamily = FontFamily(Font(Res.font.publicsanssemibold)),
-                        color = Color.LightGray,
+                        // Using 'onSurface' with lower alpha provides great contrast without looking "gray"
+                        color = colors.onSurface.copy(alpha = 0.6f),
                         letterSpacing = 1.sp
                     )
                     Text(
                         dishes,
-                        fontSize =12.sp,
+                        fontSize = 14.sp, // Slightly increased for better readability
                         fontFamily = FontFamily(Font(Res.font.publicsansmedium)),
-                        color = CustomColors.BlackberryCream,
+                        color = colors.onSurface,
                         lineHeight = 20.sp
                     )
                 }
-
             }
         }
     }

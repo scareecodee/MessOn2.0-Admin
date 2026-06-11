@@ -14,6 +14,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Eco
 import androidx.compose.material.icons.rounded.SetMeal
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -24,9 +25,6 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
-import com.messon.mess.app.theme.CustomColors
-import com.messon.mess.app.theme.CustomColors.BlackberryCream
-import com.messon.mess.app.theme.CustomColors.NonVegRed
 import messon.composeapp.generated.resources.Res
 import messon.composeapp.generated.resources.publicsansbold
 import messon.composeapp.generated.resources.publicsansmedium
@@ -66,7 +64,7 @@ fun MealScanCard(
             text = mealName,
             fontFamily = FontFamily(Font(Res.font.publicsansbold)),
             fontSize = 14.sp,
-            color = CustomColors.BlackberryCream,
+            color = MaterialTheme.colorScheme.onBackground,
             modifier = Modifier.constrainAs(title) {
                 top.linkTo(iconBox.top)
                 bottom.linkTo(iconBox.bottom)
@@ -116,18 +114,18 @@ fun MealScanCard(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.Center
             ) {
-                Icon(Icons.Rounded.Eco, contentDescription = "Veg", tint = CustomColors.VegGreen, modifier = Modifier.size(16.dp))
+                Icon(Icons.Rounded.Eco, contentDescription = "Veg", tint = Color.Green, modifier = Modifier.size(16.dp))
                 Spacer(modifier = Modifier.width(8.dp))
                 Text(text = vegScans,
                     fontFamily = FontFamily(Font(Res.font.publicsansmedium)),
                     fontSize = 11.sp,
-                    color = CustomColors.BlackberryCream
+                    color = MaterialTheme.colorScheme.onBackground
                 )
                 Spacer(modifier = Modifier.width(4.dp))
                 Text(text = "Veg",
                     fontFamily = FontFamily(Font(Res.font.publicsansmedium)),
                     fontSize = 11.sp,
-                    color = CustomColors.VegGreen
+                    color = Color.Green
                 )
             }
 
@@ -140,18 +138,18 @@ fun MealScanCard(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.Center
             ) {
-                Icon(Icons.Rounded.SetMeal, contentDescription = "Non-Veg", tint = NonVegRed, modifier = Modifier.size(16.dp))
+                Icon(Icons.Rounded.SetMeal, contentDescription = "Non-Veg", tint = Color.Red, modifier = Modifier.size(16.dp))
                 Spacer(modifier = Modifier.width(8.dp))
                 Text(text = nonVegScans,
                     fontFamily = FontFamily(Font(Res.font.publicsansmedium)),
                     fontSize = 11.sp,
-                    color = BlackberryCream
+                    color = MaterialTheme.colorScheme.onBackground
                 )
                 Spacer(modifier = Modifier.width(4.dp))
                 Text(text = "Non-Veg",
                     fontFamily = FontFamily(Font(Res.font.publicsansmedium)),
                     fontSize = 11.sp,
-                    color = NonVegRed
+                    color = Color.Red
                 )
             }
         }

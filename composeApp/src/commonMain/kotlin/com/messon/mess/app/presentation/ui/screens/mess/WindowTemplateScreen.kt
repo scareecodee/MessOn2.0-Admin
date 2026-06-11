@@ -1,4 +1,5 @@
 package com.messon.mess.app.presentation.ui.screens.mess
+
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -9,10 +10,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CalendarToday
 import androidx.compose.material.icons.filled.Celebration
 import androidx.compose.material.icons.filled.ChevronLeft
-import androidx.compose.material.icons.filled.Diamond
-import androidx.compose.material.icons.filled.MoreVert
-import androidx.compose.material.icons.filled.Notifications
-import androidx.compose.material.icons.filled.Save
 import androidx.compose.material.icons.filled.Schedule
 import androidx.compose.material.icons.filled.Sync
 import androidx.compose.material3.*
@@ -23,7 +20,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
@@ -32,9 +28,7 @@ import com.messon.mess.app.presentation.ui.component.TempDaySelector
 import com.messon.mess.app.presentation.ui.component.TimeRow
 import com.messon.mess.app.presentation.ui.state.WindowTemplateState
 import com.messon.mess.app.presentation.viewmodel.WindowTemplateVM
-import com.messon.mess.app.theme.CustomColors
-import com.messon.mess.app.theme.CustomColors.LightGrayBlue
-import com.messon.mess.app.utils.WeekDay
+import com.messon.mess.app.theme.MessonTheme
 import com.messon.mess.app.utils.to12HourTime
 import messon.composeapp.generated.resources.Res
 import messon.composeapp.generated.resources.publicsansbold
@@ -48,78 +42,54 @@ import network.chaintech.kmp_date_time_picker.utils.TimeFormat
 import network.chaintech.kmp_date_time_picker.utils.WheelPickerDefaults
 import org.jetbrains.compose.resources.Font
 
-val DaysOfWeek = listOf(
-    WeekDay.MONDAY.value,
-    WeekDay.TUESDAY.value,
-    WeekDay.WEDNESDAY.value,
-    WeekDay.THURSDAY.value,
-    WeekDay.FRIDAY.value,
-    WeekDay.SATURDAY.value,
-    WeekDay.SUNDAY.value
-)
-
 @Composable
 fun WindowTemplateScreen(
-    onBackClick:()-> Unit,
-    onSpecialWindowClick:()-> Unit,
-   windowTemplateVM: WindowTemplateVM
+    onBackClick: () -> Unit,
+    onSpecialWindowClick: () -> Unit,
+    windowTemplateVM: WindowTemplateVM
 ) {
-
     var showTimePicker by remember { mutableStateOf(false) }
     var isClosingSelected by remember { mutableStateOf(false) }
 
     val closingTime by windowTemplateVM.closingTime.collectAsState()
     val openingTime by windowTemplateVM.openingTime.collectAsState()
-
     val startDay by windowTemplateVM.openingDay.collectAsState()
-    val endDay by  windowTemplateVM.closingDay.collectAsState()
+    val endDay by windowTemplateVM.closingDay.collectAsState()
 
     val saveState by windowTemplateVM.saveTempState.collectAsState()
     val fetchState by windowTemplateVM.fetchTempState.collectAsState()
 
+    val colors = MaterialTheme.colorScheme
 
-    LaunchedEffect(Unit){
-        windowTemplateVM.fetchWindowTemplate()
-    }
+    LaunchedEffect(Unit) { windowTemplateVM.fetchWindowTemplate() }
 
-
-    LaunchedEffect(fetchState){
-        when(fetchState){
-            is WindowTemplateState.Error -> {
-                showToast(message =(fetchState as WindowTemplateState.Error).message)
-                windowTemplateVM.clearFetchState()
-            }
-
-            else -> {}
+    LaunchedEffect(fetchState) {
+        if (fetchState is WindowTemplateState.Error) {
+            showToast((fetchState as WindowTemplateState.Error).message)
+            windowTemplateVM.clearFetchState()
         }
     }
 
-    LaunchedEffect(saveState){
-        when(saveState){
-            is WindowTemplateState.Error -> {
-                showToast(message =(saveState as WindowTemplateState.Error).message)
-                windowTemplateVM.clearSaveState()
-            }
-
-            else -> {}
+    LaunchedEffect(saveState) {
+        if (saveState is WindowTemplateState.Error) {
+            showToast((saveState as WindowTemplateState.Error).message)
+            windowTemplateVM.clearSaveState()
         }
     }
+
     ConstraintLayout(
         modifier = Modifier
             .fillMaxSize()
-            .background(CustomColors.OffWhite)
+            .background(colors.background)
     ) {
-
         val (statusBar, listRef) = createRefs()
 
-        Spacer(
+        Box(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(WindowInsets.safeDrawing.asPaddingValues().calculateTopPadding())
-                .background(LightGrayBlue)
-                .constrainAs(statusBar) {
-                    top.linkTo(parent.top)
-                }
+                .background(MessonTheme.colors.divider)
+                .constrainAs(statusBar) { top.linkTo(parent.top) }
         )
 
         LazyColumn(
@@ -130,41 +100,32 @@ fun WindowTemplateScreen(
                 end.linkTo(parent.end)
                 height = Dimension.fillToConstraints
             },
-            contentPadding = PaddingValues(start=16.dp,end=16.dp, bottom = 16.dp,top=10.dp),
+            contentPadding = PaddingValues(start = 16.dp, end = 16.dp, bottom = 16.dp, top = 10.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-
             item {
-
-                ConstraintLayout(
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-
+                ConstraintLayout(modifier = Modifier.fillMaxWidth()) {
                     val (
-                        backBtnRef, headingRef,
-                        iconBox, title, subtitle, description,
-                        startLabel, startDropdown,
-                        endLabel, endDropdown,
-                        startTimeRef, closeTimeRef,
-                        applyBtn,specialBtn
+                        backBtnRef, headingRef, iconBox, title, subtitle, description,
+                        startLabel, startDropdown, endLabel, endDropdown,
+                        startTimeRef, closeTimeRef, applyBtn, specialBtn
                     ) = createRefs()
 
                     IconButton(
-                        onClick = {
-                            onBackClick()
-                        },
+                        onClick = onBackClick,
                         modifier = Modifier.constrainAs(backBtnRef) {
                             start.linkTo(parent.start)
                             top.linkTo(parent.top)
                         }
                     ) {
-                        Icon(Icons.Default.ChevronLeft, contentDescription = null)
+                        Icon(Icons.Default.ChevronLeft, contentDescription = "back", tint = colors.onSurface)
                     }
 
                     Text(
                         "Window Setting",
                         fontSize = 18.sp,
                         fontFamily = FontFamily(Font(Res.font.publicsansbold)),
+                        color = colors.onSurface,
                         modifier = Modifier.constrainAs(headingRef) {
                             start.linkTo(backBtnRef.end, 5.dp)
                             centerVerticallyTo(backBtnRef)
@@ -174,37 +135,36 @@ fun WindowTemplateScreen(
                     Icon(
                         imageVector = Icons.Default.Celebration,
                         contentDescription = "special window",
-                        modifier = Modifier.constrainAs(specialBtn){
-                            end.linkTo(parent.end, margin = 16.dp)
-                            centerVerticallyTo(backBtnRef)
-                        }
+                        modifier = Modifier
+                            .constrainAs(specialBtn) {
+                                end.linkTo(parent.end, margin = 16.dp)
+                                centerVerticallyTo(backBtnRef)
+                            }
                             .size(32.dp)
                             .clip(CircleShape)
-                            .background(color= CustomColors.RichCerulean.copy(0.1f), shape = CircleShape)
-                            .clickable{
-                                onSpecialWindowClick()
-                            },
-                        tint = CustomColors.RichCerulean,
+                            .background(color = colors.primary.copy(alpha = 0.1f), shape = CircleShape)
+                            .clickable { onSpecialWindowClick() },
+                        tint = colors.primary,
                     )
 
                     Box(
                         modifier = Modifier
                             .size(48.dp)
-                            .background(CustomColors.LightBlue, RoundedCornerShape(12.dp))
+                            .background(colors.primaryContainer, RoundedCornerShape(12.dp))
                             .constrainAs(iconBox) {
                                 top.linkTo(backBtnRef.bottom, 15.dp)
                                 start.linkTo(parent.start)
                             },
                         contentAlignment = Alignment.Center
                     ) {
-                        Icon(Icons.Default.Schedule, null, tint = CustomColors.RichCerulean)
+                        Icon(Icons.Default.Schedule, null, tint = colors.primary)
                     }
 
                     Text(
                         "Meal Preference Window",
                         fontSize = 16.sp,
                         fontFamily = FontFamily(Font(Res.font.publicsanssemibold)),
-                        maxLines = 1,
+                        color = colors.onSurface,
                         modifier = Modifier.constrainAs(title) {
                             top.linkTo(iconBox.top)
                             start.linkTo(iconBox.end, 12.dp)
@@ -213,10 +173,9 @@ fun WindowTemplateScreen(
 
                     Text(
                         "Weekly automated scheduling",
-                        color = LightGrayBlue,
+                        color = colors.onSurfaceVariant,
                         fontSize = 12.sp,
                         fontFamily = FontFamily(Font(Res.font.publicsansregular)),
-                        maxLines = 1,
                         modifier = Modifier.constrainAs(subtitle) {
                             top.linkTo(title.bottom)
                             start.linkTo(title.start)
@@ -225,10 +184,9 @@ fun WindowTemplateScreen(
 
                     Text(
                         "Configure the default window for students to submit preferences.",
-                        color = Color.Gray,
+                        color = colors.onSurfaceVariant.copy(alpha = 0.7f),
                         fontSize = 12.sp,
                         fontFamily = FontFamily(Font(Res.font.publicsansmedium)),
-                        maxLines = 2,
                         modifier = Modifier.constrainAs(description) {
                             top.linkTo(iconBox.bottom, 20.dp)
                             start.linkTo(parent.start)
@@ -239,10 +197,9 @@ fun WindowTemplateScreen(
 
                     Text(
                         "Opening Day",
-                        color = LightGrayBlue,
+                        color = colors.onSurfaceVariant,
                         fontSize = 14.sp,
                         fontFamily = FontFamily(Font(Res.font.publicsanssemibold)),
-                        maxLines = 1,
                         modifier = Modifier.constrainAs(startLabel) {
                             top.linkTo(description.bottom, 20.dp)
                             start.linkTo(endDropdown.start)
@@ -252,7 +209,7 @@ fun WindowTemplateScreen(
                     )
 
                     TempDaySelector(
-                        selectedDay = startDay?:"__",
+                        selectedDay = startDay ?: "__",
                         onDaySelected = { windowTemplateVM.updateOpeningDay(it) },
                         modifier = Modifier.constrainAs(startDropdown) {
                             top.linkTo(startLabel.bottom, 8.dp)
@@ -264,10 +221,9 @@ fun WindowTemplateScreen(
 
                     Text(
                         "Closing Day",
-                        color = LightGrayBlue,
+                        color = colors.onSurfaceVariant,
                         fontSize = 14.sp,
                         fontFamily = FontFamily(Font(Res.font.publicsanssemibold)),
-                        maxLines = 1,
                         modifier = Modifier.constrainAs(endLabel) {
                             top.linkTo(startDropdown.bottom, 16.dp)
                             start.linkTo(endDropdown.start)
@@ -275,7 +231,7 @@ fun WindowTemplateScreen(
                     )
 
                     TempDaySelector(
-                        selectedDay = endDay?:"__",
+                        selectedDay = endDay ?: "__",
                         onDaySelected = { windowTemplateVM.updateClosingDay(it) },
                         modifier = Modifier.constrainAs(endDropdown) {
                             top.linkTo(endLabel.bottom, 8.dp)
@@ -287,9 +243,9 @@ fun WindowTemplateScreen(
 
                     TimeRow(
                         label = "Opening Time",
-                        time = openingTime?.to12HourTime()?:"__",
+                        time = openingTime?.to12HourTime() ?: "__",
                         icon = Icons.Default.CalendarToday,
-                        iconColor = CustomColors.HoneyBronze,
+                        iconColor = colors.secondary,
                         onClick = {
                             showTimePicker = true
                             isClosingSelected = false
@@ -303,10 +259,10 @@ fun WindowTemplateScreen(
                     )
 
                     TimeRow(
-                        label = "ClosingTime",
-                        time = closingTime?.to12HourTime() ?:"__",
+                        label = "Closing Time",
+                        time = closingTime?.to12HourTime() ?: "__",
                         icon = Icons.Default.Schedule,
-                        iconColor = CustomColors.RichCerulean,
+                        iconColor = colors.primary,
                         onClick = {
                             showTimePicker = true
                             isClosingSelected = true
@@ -321,19 +277,17 @@ fun WindowTemplateScreen(
 
                     Button(
                         colors = ButtonDefaults.buttonColors(
-                            containerColor = CustomColors.RichCerulean,
-                            disabledContainerColor = CustomColors.RichCerulean
+                            containerColor = colors.primary,
+                            contentColor = colors.onPrimary
                         ),
-                        onClick = {
-                            windowTemplateVM.saveWindowTemplate()
-                        },
+                        onClick = { windowTemplateVM.saveWindowTemplate() },
                         modifier = Modifier
                             .height(55.dp)
                             .constrainAs(applyBtn) {
                                 top.linkTo(closeTimeRef.bottom, 35.dp)
-                                start.linkTo(parent.start,margin=10.dp)
-                                end.linkTo(parent.end,margin=10.dp)
-                                width= Dimension.fillToConstraints
+                                start.linkTo(parent.start, margin = 10.dp)
+                                end.linkTo(parent.end, margin = 10.dp)
+                                width = Dimension.fillToConstraints
                             },
                         shape = RoundedCornerShape(30.dp)
                     ) {
@@ -341,16 +295,9 @@ fun WindowTemplateScreen(
                             "Apply Settings",
                             fontSize = 14.sp,
                             fontFamily = FontFamily(Font(Res.font.publicsanssemibold)),
-                            maxLines = 1,
                         )
                         Spacer(Modifier.width(8.dp))
-
-                        Icon(
-                            Icons.Default.Sync,
-                            null,
-                            tint = Color.White,
-                            modifier = Modifier.size(25.dp)
-                            )
+                        Icon(Icons.Default.Sync, null, modifier = Modifier.size(25.dp))
                     }
                 }
             }
@@ -358,37 +305,25 @@ fun WindowTemplateScreen(
 
         WheelTimePickerView(
             modifier = Modifier.safeContentPadding(),
-            title =if(isClosingSelected) "Set Closing Time" else "Set Opening Time",
+            title = if (isClosingSelected) "Set Closing Time" else "Set Opening Time",
             timeFormat = TimeFormat.AM_PM,
-            titleStyle = TextStyle(
-                fontFamily = FontFamily(Font(Res.font.publicsanssemibold)),
-                fontSize = 16.sp
-            ),
-            doneLabelStyle =TextStyle(
-                fontFamily = FontFamily(Font(Res.font.publicsanssemibold)),
-                fontSize = 16.sp
-            ),
+            titleStyle = TextStyle(fontFamily = FontFamily(Font(Res.font.publicsanssemibold)), fontSize = 16.sp),
+            doneLabelStyle = TextStyle(fontFamily = FontFamily(Font(Res.font.publicsanssemibold)), fontSize = 16.sp),
             showTimePicker = showTimePicker,
             height = 220.dp,
             shape = RoundedCornerShape(30.dp),
-            defaultTextStyle = TextStyle(
-                fontFamily = FontFamily(Font(Res.font.publicsansmedium)),
-                fontSize = 12.sp
-            ),
-            selectedTextStyle = TextStyle(
-                fontFamily = FontFamily(Font(Res.font.publicsanssemibold)),
-                fontSize = 14.sp
-            ),
+            defaultTextStyle = TextStyle(fontFamily = FontFamily(Font(Res.font.publicsansmedium)), fontSize = 12.sp),
+            selectedTextStyle = TextStyle(fontFamily = FontFamily(Font(Res.font.publicsanssemibold)), fontSize = 14.sp),
             selectorProperties = WheelPickerDefaults.selectorProperties(
-                enabled=true,
-                borderColor = CustomColors.RichCerulean
+                enabled = true,
+                borderColor = colors.primary
             ),
             onDoneClick = {
-                showTimePicker=false
-                if(isClosingSelected) windowTemplateVM.updateClosingTime(it) else windowTemplateVM.updateOpeningTime(it)
+                showTimePicker = false
+                if (isClosingSelected) windowTemplateVM.updateClosingTime(it) else windowTemplateVM.updateOpeningTime(it)
             },
-            onDismiss = {showTimePicker=false},
-            dateTimePickerView= DateTimePickerView.BOTTOM_SHEET_VIEW,
+            onDismiss = { showTimePicker = false },
+            dateTimePickerView = DateTimePickerView.BOTTOM_SHEET_VIEW,
         )
     }
 }

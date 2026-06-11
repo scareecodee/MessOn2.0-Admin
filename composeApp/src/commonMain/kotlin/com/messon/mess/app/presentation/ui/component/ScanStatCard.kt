@@ -9,7 +9,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.FoodBank
 import androidx.compose.material.icons.outlined.Coffee
 import androidx.compose.material.icons.outlined.ModeNight
-import androidx.compose.material.icons.outlined.ShieldMoon
 import androidx.compose.material.icons.outlined.WbSunny
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -17,14 +16,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontFamily
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
-import com.messon.mess.app.theme.CustomColors
+import com.messon.mess.app.theme.MessonTheme
 import com.messon.mess.app.utils.MealSlot
 import messon.composeapp.generated.resources.Res
 import messon.composeapp.generated.resources.publicsansmedium
@@ -40,15 +37,18 @@ fun ScanStatCard(
     nonVegCount: Int,
     accentColor: Color,
     maxVegCapacity: Int = 250,
-    maxNonVegCapacity: Int=200,
+    maxNonVegCapacity: Int = 200,
     modifier: Modifier = Modifier
 ) {
+    val colors = MaterialTheme.colorScheme
+    val messonColors = MessonTheme.colors
+
     Card(
         modifier = modifier
             .fillMaxWidth()
             .padding(8.dp),
         shape = RoundedCornerShape(24.dp),
-        colors = CardDefaults.cardColors(containerColor = Color.White),
+        colors = CardDefaults.cardColors(containerColor = colors.surface),
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
     ) {
         ConstraintLayout(
@@ -86,9 +86,9 @@ fun ScanStatCard(
 
             Text(
                 text = "Total Scans",
-                fontSize =14.sp,
+                fontSize = 14.sp,
                 fontFamily = FontFamily(Font(Res.font.publicsanssemibold)),
-                color = Color.LightGray,
+                color = colors.outline,
                 modifier = Modifier.constrainAs(totalLabel) {
                     top.linkTo(parent.top)
                     end.linkTo(parent.end)
@@ -99,7 +99,7 @@ fun ScanStatCard(
                 text = totalCount.toString(),
                 fontSize = 20.sp,
                 fontFamily = FontFamily(Font(Res.font.publicsansregular)),
-                color = CustomColors.BlackberryCream,
+                color = colors.onSurface,
                 modifier = Modifier.constrainAs(totalValue) {
                     top.linkTo(totalLabel.bottom, margin = 2.dp)
                     end.linkTo(parent.end)
@@ -107,10 +107,10 @@ fun ScanStatCard(
             )
 
             Text(
-                text =mealSlot.replaceFirstChar { it.uppercaseChar() },
-                fontSize =16.sp,
+                text = mealSlot.replaceFirstChar { it.uppercaseChar() },
+                fontSize = 16.sp,
                 fontFamily = FontFamily(Font(Res.font.publicsanssemibold)),
-                color = CustomColors.BlackberryCream,
+                color = colors.onSurface,
                 modifier = Modifier.constrainAs(titleText) {
                     top.linkTo(iconBox.bottom, margin = 24.dp)
                     start.linkTo(parent.start)
@@ -130,14 +130,14 @@ fun ScanStatCard(
                     label = "Veg",
                     count = vegCount,
                     maxCapacity = maxVegCapacity,
-                    barColor = CustomColors.RichCerulean
+                    barColor = colors.primary
                 )
 
                 StatProgressBar(
                     label = "Non-Veg",
                     count = nonVegCount,
                     maxCapacity = maxNonVegCapacity,
-                    barColor = CustomColors.HoneyBronze
+                    barColor = colors.secondary
                 )
             }
         }
@@ -151,12 +151,8 @@ private fun StatProgressBar(
     maxCapacity: Int,
     barColor: Color
 ) {
-    val progress = if (maxCapacity == 0) {
-        0f
-    } else {
-        (count.toFloat() / maxCapacity).coerceIn(0f, 1f)
-    }
-
+    val colors = MaterialTheme.colorScheme
+    val progress = if (maxCapacity == 0) 0f else (count.toFloat() / maxCapacity).coerceIn(0f, 1f)
     val safeProgress = if (progress.isNaN()) 0f else progress
 
     val animatedProgress by animateFloatAsState(
@@ -185,14 +181,14 @@ private fun StatProgressBar(
                 )
                 Text(
                     text = label,
-                    fontSize =12.sp,
+                    fontSize = 12.sp,
                     fontFamily = FontFamily(Font(Res.font.publicsansmedium)),
-                    color = Color.Gray,
+                    color = colors.outline,
                 )
             }
             Text(
                 text = "$count / $maxCapacity",
-                fontSize =13.sp,
+                fontSize = 13.sp,
                 fontFamily = FontFamily(Font(Res.font.publicsansregular)),
                 color = barColor
             )
@@ -203,7 +199,7 @@ private fun StatProgressBar(
                 .fillMaxWidth()
                 .height(8.dp)
                 .clip(RoundedCornerShape(50))
-                .background(Color(0xFFF5F5F5))
+                .background(MaterialTheme.colorScheme.onSurface.copy(alpha = 0.08f))
         ) {
             Box(
                 modifier = Modifier

@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -19,24 +18,20 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
-import androidx.lifecycle.viewmodel.compose.viewModel
-import co.touchlab.kermit.Logger
 import com.messon.mess.app.presentation.ui.component.DaySelector
 import com.messon.mess.app.presentation.ui.component.MealSlotTabs
 import com.messon.mess.app.presentation.ui.component.MenuInputCard
 import com.messon.mess.app.presentation.ui.state.SaveMenuState
 import com.messon.mess.app.presentation.viewmodel.MenuCreateVM
-import com.messon.mess.app.theme.CustomColors
+import com.messon.mess.app.theme.MessonTheme
 import com.messon.mess.app.utils.MealSlot
 import com.messon.mess.app.utils.convertDay
 import com.messon.mess.app.utils.convertSlot
-import com.messon.mess.app.utils.convertSlotToShort
 import messon.composeapp.generated.resources.Res
 import messon.composeapp.generated.resources.publicsansmedium
 import messon.composeapp.generated.resources.publicsansregular
 import messon.composeapp.generated.resources.publicsanssemibold
 import org.jetbrains.compose.resources.Font
-import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 fun MenuHeader(
@@ -45,17 +40,18 @@ fun MenuHeader(
     modifier: Modifier = Modifier,
     onBackClick: () -> Unit
 ) {
+    val colors = MaterialTheme.colorScheme
     Column(modifier = modifier.fillMaxWidth()) {
         ConstraintLayout(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 24.dp, vertical = 16.dp)
         ) {
-            val (backBtn, titleCol, chefBtn) = createRefs()
+            val (backBtn, titleCol) = createRefs()
 
             Surface(
                 shape = RoundedCornerShape(16.dp),
-                color = Color.White,
+                color = colors.surface,
                 shadowElevation = 2.dp,
                 modifier = Modifier
                     .size(40.dp)
@@ -65,55 +61,35 @@ fun MenuHeader(
                         bottom.linkTo(parent.bottom)
                     }
                     .clip(RoundedCornerShape(16.dp))
-                    .clickable {  onBackClick()}
+                    .clickable { onBackClick() }
             ) {
                 Icon(
                     Icons.Filled.ChevronLeft,
                     contentDescription = null,
                     modifier = Modifier.padding(8.dp),
-                    tint = CustomColors.BlackberryCream
+                    tint = colors.onSurface
                 )
             }
 
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 modifier = Modifier.constrainAs(titleCol) {
-                    start.linkTo(backBtn.end)
-                    end.linkTo(chefBtn.start)
+                    start.linkTo(parent.start)
+                    end.linkTo(parent.end)
                     top.linkTo(parent.top)
                 }
             ) {
                 Text(
                     "Mess Menu",
-                    fontSize =18.sp,
+                    fontSize = 18.sp,
                     fontFamily = FontFamily(Font(Res.font.publicsanssemibold)),
-                    color = Color.Black
+                    color = colors.onSurface
                 )
                 Text(
                     "Weekly",
-                    fontSize =14.sp,
+                    fontSize = 14.sp,
                     fontFamily = FontFamily(Font(Res.font.publicsansregular)),
-                    color = CustomColors.BlackberryCream
-                )
-            }
-
-            Surface(
-                shape = RoundedCornerShape(16.dp),
-                color = Color.White,
-                shadowElevation = 2.dp,
-                modifier = Modifier
-                    .size(40.dp)
-                    .constrainAs(chefBtn) {
-                        end.linkTo(parent.end)
-                        top.linkTo(parent.top)
-                        bottom.linkTo(parent.bottom)
-                    }
-            ) {
-                Icon(
-                    Icons.Default.Restaurant,
-                    contentDescription = null,
-                    modifier = Modifier.padding(8.dp),
-                    tint = CustomColors.RichCerulean
+                    color = colors.onSurfaceVariant
                 )
             }
         }
@@ -122,15 +98,13 @@ fun MenuHeader(
             selectedDay = selectedDay,
             onDaySelected = onDaySelected
         )
-
     }
 }
-
 
 @Composable
 fun CreateMenuScreen(
     menuCreateVM: MenuCreateVM,
-    onBackClick:()-> Unit
+    onBackClick: () -> Unit
 ) {
     var selectedDay by remember { mutableStateOf("Mon") }
     var activeSlot by remember { mutableStateOf("B") }
@@ -138,18 +112,14 @@ fun CreateMenuScreen(
     var nonVegMenu by remember { mutableStateOf("") }
     val uiState by menuCreateVM.uiState.collectAsState()
     val weeklyMenu by menuCreateVM.weeklyMenu.collectAsState()
-    LaunchedEffect(weeklyMenu) {
-        Logger.withTag("mess menu").d { weeklyMenu.toString() }
-    }
 
-    LaunchedEffect(Unit){
-        menuCreateVM.loadMenu()
-    }
+    val colors = MaterialTheme.colorScheme
+
+    LaunchedEffect(Unit) { menuCreateVM.loadMenu() }
+
     LaunchedEffect(selectedDay, activeSlot, weeklyMenu) {
-
         val day = convertDay(selectedDay)
         val slot = convertSlot(activeSlot)
-
         val menu = weeklyMenu[day]
 
         val newVeg = when (slot) {
@@ -168,42 +138,26 @@ fun CreateMenuScreen(
         if (nonVegMenu != newNonVeg) nonVegMenu = newNonVeg
     }
 
-
-
     ConstraintLayout(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(CustomColors.OffWhite)
+        modifier = Modifier.fillMaxSize().background(colors.background)
     ) {
-        val (header, contentCard, saveButton,statusBarBox) = createRefs()
+        val (header, contentCard, saveButton, statusBarBox) = createRefs()
 
         Box(
             modifier = Modifier.fillMaxWidth()
-                .height(WindowInsets.safeDrawing.asPaddingValues().calculateTopPadding()+5.dp)
-                .background(CustomColors.LightGrayBlue)
-                .constrainAs(statusBarBox){
-                    top.linkTo(parent.top)
-                    end.linkTo(parent.end)
-                }
+                .height(WindowInsets.safeDrawing.asPaddingValues().calculateTopPadding() + 5.dp)
+                .background( MessonTheme.colors.divider)
+                .constrainAs(statusBarBox) { top.linkTo(parent.top); end.linkTo(parent.end) }
         )
 
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .constrainAs(header) {
-                    top.linkTo(statusBarBox.bottom)
-                }
-        ) {
+        Box(modifier = Modifier.fillMaxWidth().constrainAs(header) { top.linkTo(statusBarBox.bottom) }) {
             Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(200.dp)
-                    .background(
-                        Brush.radialGradient(
-                            0f to CustomColors.HoneyBronze.copy(alpha = 0.15f),
-                            1000f to Color.Transparent,
-                        )
+                modifier = Modifier.fillMaxWidth().height(200.dp).background(
+                    Brush.radialGradient(
+                        0f to colors.primaryContainer.copy(alpha = 0.3f),
+                        1000f to Color.Transparent,
                     )
+                )
             )
             MenuHeader(
                 selectedDay = selectedDay,
@@ -213,126 +167,75 @@ fun CreateMenuScreen(
         }
 
         Surface(
-            modifier = Modifier
-                .fillMaxWidth()
-                .constrainAs(contentCard) {
-                    top.linkTo(header.bottom, margin = (-20).dp)
-                    bottom.linkTo(parent.bottom)
-                    height = Dimension.fillToConstraints
-                },
+            modifier = Modifier.fillMaxWidth().constrainAs(contentCard) {
+                top.linkTo(header.bottom, margin = (-20).dp)
+                bottom.linkTo(parent.bottom)
+                height = Dimension.fillToConstraints
+            },
             shape = RoundedCornerShape(topStart = 40.dp, topEnd = 40.dp),
-            color = Color.White,
+            color = colors.background,
             shadowElevation = 8.dp
         ) {
-            LazyColumn(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(24.dp)
-            ) {
+            LazyColumn(modifier = Modifier.fillMaxSize().padding(24.dp)) {
                 item {
                     MealSlotTabs(
                         activeSlot = activeSlot,
                         onSlotSelected = { activeSlot = it },
-                        iconColor = CustomColors.RichCerulean
+                        iconColor = colors.primary
                     )
                 }
-
-                item{
-                    Spacer(Modifier.height(24.dp))
-                }
-
-
+                item { Spacer(Modifier.height(24.dp)) }
                 item {
                     MenuInputCard(
-                    label = "Vegetarian Selection",
-                    value = vegMenu,
+                        label = "Vegetarian Selection",
+                        value = vegMenu,
                         onValueChange = {
                             vegMenu = it
-
-                            val day = convertDay(selectedDay)
-                            val slot = convertSlot(activeSlot)
-
-                            menuCreateVM.updateMenu(
-                                day = day,
-                                slot = slot,
-                                veg = it,
-                                nonVeg = nonVegMenu
-                            )
+                            menuCreateVM.updateMenu(convertDay(selectedDay), convertSlot(activeSlot), it, nonVegMenu)
                         },
-                    icon = Icons.Default.EnergySavingsLeaf,
-                    iconBgColor = Color(0xFFDCFCE7),
-                    iconTint = Color(0xFF166534),
-                    cardBgColor = CustomColors.LightLavender,
-                    footerTag = "Fresh"
-                ) }
-
-
-                item {
-                    Spacer(Modifier.height(16.dp))
-
+                        icon = Icons.Default.EnergySavingsLeaf,
+                        iconBgColor = MessonTheme.colors.success.copy(alpha = 0.1f),
+                        iconTint = MessonTheme.colors.success,
+                        cardBgColor = colors.surface,
+                        footerTag = "Fresh"
+                    )
                 }
-
+                item { Spacer(Modifier.height(16.dp)) }
                 item {
                     MenuInputCard(
                         label = "Non-Veg Selection",
                         value = nonVegMenu,
                         onValueChange = {
                             nonVegMenu = it
-
-                            val day = convertDay(selectedDay)
-                            val slot = convertSlot(activeSlot)
-
-                            menuCreateVM.updateMenu(
-                                day = day,
-                                slot = slot,
-                                veg = vegMenu,
-                                nonVeg =it
-                            )
+                            menuCreateVM.updateMenu(convertDay(selectedDay), convertSlot(activeSlot), vegMenu, it)
                         },
                         icon = Icons.Default.Whatshot,
-                        iconBgColor = Color(0xFFFFEDD5),
-                        iconTint = Color(0xFFEA580C),
-                        cardBgColor = CustomColors.Cream,
+                        iconBgColor = MessonTheme.colors.success.copy(alpha = 0.1f),
+                        iconTint = MessonTheme.colors.success,
+                        cardBgColor = colors.surface,
                         footerTag = "Protein"
                     )
                 }
-
-
-                item {
-                    Spacer(Modifier.height(100.dp))
-                }
+                item { Spacer(Modifier.height(100.dp)) }
             }
         }
 
         Button(
             enabled = uiState !is SaveMenuState.Loading,
-            onClick = {
-                menuCreateVM.saveMenuToDb()
-            },
+            onClick = { menuCreateVM.saveMenuToDb() },
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 32.dp, vertical = 32.dp)
                 .height(55.dp)
-                .constrainAs(saveButton) {
-                    bottom.linkTo(parent.bottom)
-                },
-            colors = ButtonDefaults.buttonColors(containerColor = CustomColors.RichCerulean),
+                .constrainAs(saveButton) { bottom.linkTo(parent.bottom) },
+            colors = ButtonDefaults.buttonColors(containerColor = colors.primary),
             shape = RoundedCornerShape(32.dp),
             elevation = ButtonDefaults.buttonElevation(defaultElevation = 8.dp)
         ) {
             Row(verticalAlignment = Alignment.CenterVertically) {
-                Text(
-                    "Save Mess Menu",
-                    fontSize =14.sp,
-                    fontFamily = FontFamily(Font(Res.font.publicsansmedium)),
-                )
+                Text("Save Mess Menu", fontSize = 14.sp, fontFamily = FontFamily(Font(Res.font.publicsansmedium)))
                 Spacer(Modifier.width(8.dp))
-                Icon(
-                    imageVector = Icons.Default.CheckCircle,
-                    contentDescription = "Save Menu",
-                    tint=Color.White,
-                    modifier = Modifier.size(25.dp)
-                )
+                Icon(Icons.Default.CheckCircle, contentDescription = "Save", tint = Color.White, modifier = Modifier.size(25.dp))
             }
         }
     }

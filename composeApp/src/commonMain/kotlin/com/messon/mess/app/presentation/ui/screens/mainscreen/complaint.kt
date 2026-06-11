@@ -20,6 +20,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.text.font.FontFamily
@@ -27,7 +28,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.Dimension
 import com.messon.mess.app.presentation.ui.component.ComplaintCard
-import com.messon.mess.app.theme.CustomColors
 import messon.composeapp.generated.resources.Res
 import messon.composeapp.generated.resources.publicsansbold
 import messon.composeapp.generated.resources.publicsansmedium
@@ -42,13 +42,13 @@ fun ComplaintScreen(
 ){
     ConstraintLayout(
         modifier = modifier.fillMaxSize()
-            .background(CustomColors.OffWhite)
+            .background(MaterialTheme.colorScheme.background)
     ){
         val (statusBarBox,headingRef,listRef,backBtnRef,markAsReadBtn)=createRefs()
         Box(
             modifier = Modifier.fillMaxWidth()
                 .height(WindowInsets.safeDrawing.asPaddingValues().calculateTopPadding()+5.dp)
-                .background(CustomColors.LightGrayBlue)
+                .background(MaterialTheme.colorScheme.outline)
                 .constrainAs(statusBarBox){
                     top.linkTo(parent.top)
                     end.linkTo(parent.end)
@@ -66,7 +66,8 @@ fun ComplaintScreen(
             Icon(
                 imageVector = Icons.Default.ChevronLeft,
                 contentDescription = "back btn",
-                modifier = Modifier.size(28.dp)
+                modifier = Modifier.size(28.dp),
+                tint=MaterialTheme.colorScheme.onSurface
             )
         }
 
@@ -74,6 +75,7 @@ fun ComplaintScreen(
             maxLines = 1,
             text ="Complaints",
             fontSize = 22.sp,
+            color= MaterialTheme.colorScheme.onSurface,
             fontFamily = FontFamily(Font(Res.font.publicsansbold)),
             modifier = Modifier
                 .constrainAs(headingRef){
@@ -87,7 +89,7 @@ fun ComplaintScreen(
 
         Button(
             colors = ButtonDefaults.buttonColors(
-                containerColor = CustomColors.HoneyBronze.copy(alpha = 0.1f)
+                containerColor = MaterialTheme.colorScheme.secondary.copy(alpha = 0.1f)
             ),
             onClick = onMarkAsReadBtnClick,
             modifier = Modifier.constrainAs(markAsReadBtn){
@@ -98,7 +100,7 @@ fun ComplaintScreen(
             Text(
                 text ="mark all as read",
                 maxLines = 1,
-                color = CustomColors.HoneyBronze.copy(alpha = 0.8f),
+                color = MaterialTheme.colorScheme.secondary.copy(alpha = 0.8f),
                 fontSize = 11.sp,
                 fontFamily = FontFamily(Font(Res.font.publicsansmedium)),
             )

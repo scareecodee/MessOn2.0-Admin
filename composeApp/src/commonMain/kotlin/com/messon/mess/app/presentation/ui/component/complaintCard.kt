@@ -20,6 +20,7 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -36,7 +37,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
-import com.messon.mess.app.theme.CustomColors
 import messon.composeapp.generated.resources.Res
 import messon.composeapp.generated.resources.publicsansbold
 import messon.composeapp.generated.resources.publicsansmedium
@@ -51,11 +51,13 @@ fun ComplaintCard(
     createdAt: String,
     sentBy: String,
 
-) {
+    ) {
     var isExpanded by remember { mutableStateOf(false) }
+    val colors = MaterialTheme.colorScheme
+
     Card(
         colors = CardDefaults.cardColors(
-            containerColor = Color.White
+            containerColor = colors.surface
         ),
         shape = RoundedCornerShape(15.dp),
         modifier = modifier.animateContentSize()
@@ -63,7 +65,7 @@ fun ComplaintCard(
             .padding(horizontal = 18.dp)
             .border(
                 width = 0.5.dp,
-                color = Color.LightGray,
+                color = colors.outline.copy(alpha = 0.5f),
                 shape = RoundedCornerShape(15.dp)
             )
             .clip(RoundedCornerShape(15.dp))
@@ -73,7 +75,7 @@ fun ComplaintCard(
 
     ) {
         ConstraintLayout(modifier = Modifier.fillMaxSize().padding(5.dp)) {
-            val (dividerRef,boxedIconRef, subjectRef, descriptionRef, createdTimeRef, expandIconRef,sentByRef,circledNameRef) = createRefs()
+            val (dividerRef, boxedIconRef, subjectRef, descriptionRef, createdTimeRef, expandIconRef, sentByRef, circledNameRef) = createRefs()
             Icon(
                 imageVector = Icons.Outlined.ErrorOutline,
                 contentDescription = "complaint",
@@ -84,7 +86,7 @@ fun ComplaintCard(
                         start.linkTo(parent.start, margin = 10.dp)
                         top.linkTo(parent.top, margin = 15.dp)
                     },
-                tint = CustomColors.RichCerulean
+                tint = colors.primary
             )
 
             Text(
@@ -93,6 +95,7 @@ fun ComplaintCard(
                 text = subject,
                 fontSize = 14.sp,
                 fontFamily = FontFamily(Font(Res.font.publicsansbold)),
+                color = colors.onSurface,
                 modifier = Modifier.constrainAs(subjectRef) {
                     top.linkTo(boxedIconRef.top, margin = 5.dp)
                     end.linkTo(parent.end, margin = 15.dp)
@@ -115,7 +118,7 @@ fun ComplaintCard(
                 Icon(
                     imageVector = if (isExpanded) Icons.Default.KeyboardArrowUp else Icons.Default.KeyboardArrowDown,
                     contentDescription = "expand btn",
-                    tint = Color.LightGray,
+                    tint = colors.outline,
                     modifier = Modifier.size(20.dp)
                 )
             }
@@ -126,6 +129,7 @@ fun ComplaintCard(
                 text = description,
                 fontSize = 12.sp,
                 fontFamily = FontFamily(Font(Res.font.publicsansregular)),
+                color = colors.onSurfaceVariant,
                 modifier = Modifier.constrainAs(descriptionRef) {
                     top.linkTo(subjectRef.bottom, margin = 9.dp)
                     end.linkTo(parent.end, margin = 5.dp)
@@ -135,46 +139,46 @@ fun ComplaintCard(
             )
 
             HorizontalDivider(
-                thickness =0.3.dp,
-                color = Color.LightGray.copy(0.5f),
-                modifier = Modifier.constrainAs(dividerRef){
-                   top.linkTo( descriptionRef.bottom, margin = 10.dp)
+                thickness = 0.3.dp,
+                color = colors.outline.copy(alpha = 0.5f),
+                modifier = Modifier.constrainAs(dividerRef) {
+                    top.linkTo(descriptionRef.bottom, margin = 10.dp)
                     start.linkTo(parent.start, margin = 16.dp)
                     end.linkTo(parent.end, margin = 16.dp)
-                    width= Dimension.fillToConstraints
+                    width = Dimension.fillToConstraints
                 }
                     .fillMaxWidth()
 
             )
 
             CircledName(
-                modifier = Modifier.constrainAs(circledNameRef){
+                modifier = Modifier.constrainAs(circledNameRef) {
                     start.linkTo(parent.start, margin = 10.dp)
                     top.linkTo(dividerRef.top, margin = 10.dp)
                     bottom.linkTo(parent.bottom, margin = 10.dp)
-                }
-                ,
-                letter = sentBy[0].toString(),
-                color = CustomColors.BlackberryCream
+                },
+                letter = sentBy.getOrNull(0)?.toString() ?: "?",
+                color = colors.onSurface
             )
             Text(
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
-                text =sentBy,
+                text = sentBy,
                 fontSize = 10.sp,
                 fontFamily = FontFamily(Font(Res.font.publicsansmedium)),
-                modifier = Modifier.constrainAs(sentByRef){
+                color = colors.onSurface,
+                modifier = Modifier.constrainAs(sentByRef) {
                     start.linkTo(circledNameRef.end, margin = 8.dp)
                     top.linkTo(circledNameRef.top)
                     bottom.linkTo(circledNameRef.bottom)
                 }
             )
             Text(
-                fontSize =9.sp,
+                fontSize = 9.sp,
                 fontFamily = FontFamily(Font(Res.font.publicsansmedium)),
                 text = createdAt,
-                color = Color.LightGray,
-                modifier = Modifier.constrainAs(createdTimeRef){
+                color = colors.outline,
+                modifier = Modifier.constrainAs(createdTimeRef) {
                     end.linkTo(parent.end, margin = 10.dp)
                     top.linkTo(circledNameRef.top)
                     bottom.linkTo(circledNameRef.bottom)
@@ -184,30 +188,24 @@ fun ComplaintCard(
     }
 }
 
-
-
-
-
-
-
 @Composable
 fun CircledName(
     modifier: Modifier,
     letter: String,
     color: Color
-){
+) {
     Box(
         contentAlignment = Alignment.Center,
         modifier = modifier.size(22.dp)
             .background(
-            color = color.copy(alpha = 0.15f),
-            shape = CircleShape
-        )
-    ){
+                color = color.copy(alpha = 0.15f),
+                shape = CircleShape
+            )
+    ) {
         Text(
             color = color,
-            text =letter,
-            fontSize =9.sp,
+            text = letter,
+            fontSize = 9.sp,
             fontFamily = FontFamily(Font(Res.font.publicsansbold)),
         )
     }

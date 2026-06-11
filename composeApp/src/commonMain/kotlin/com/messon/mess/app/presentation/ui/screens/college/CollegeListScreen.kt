@@ -1,4 +1,5 @@
 package com.messon.mess.app.presentation.ui.screens.college
+
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -12,7 +13,6 @@ import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -22,25 +22,24 @@ import com.messon.mess.app.presentation.ui.component.CollegeCard
 import com.messon.mess.app.presentation.ui.component.SearchBar
 import com.messon.mess.app.presentation.ui.state.FetchCollegesState
 import com.messon.mess.app.presentation.viewmodel.CollegeScreenVM
-import com.messon.mess.app.theme.CustomColors
 import messon.composeapp.generated.resources.Res
 import messon.composeapp.generated.resources.publicsansbold
 import multiplatform.network.cmptoast.showToast
 import org.jetbrains.compose.resources.Font
+
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CollegeListScreen(
-    onCardClick:()->Unit,
-    onBackClick:()-> Unit,
+    onCardClick: () -> Unit,
+    onBackClick: () -> Unit,
     collegeScreenVM: CollegeScreenVM
 ) {
-    var searchQuery by remember { mutableStateOf("") }
     var query by remember { mutableStateOf("") }
     val pullToRefreshState = rememberPullToRefreshState()
     val uiState by collegeScreenVM.uiState.collectAsState()
-    val isRefreshing=uiState is FetchCollegesState.Loading
+    val isRefreshing = uiState is FetchCollegesState.Loading
 
-
-    LaunchedEffect(Unit){
+    LaunchedEffect(Unit) {
         collegeScreenVM.fetchColleges()
     }
 
@@ -49,47 +48,45 @@ fun CollegeListScreen(
         it.collegeName.contains(query, ignoreCase = true)
     }
 
-    LaunchedEffect(uiState){
-        when(uiState){
+    LaunchedEffect(uiState) {
+        when (uiState) {
             is FetchCollegesState.Error -> {
-                showToast(
-                    message = "Unable to load"
-                )
+                showToast(message = "Unable to load")
             }
-
             else -> {}
         }
     }
 
-    ConstraintLayout(modifier = Modifier.fillMaxSize()
-        .background(CustomColors.OffWhite)
+    ConstraintLayout(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(MaterialTheme.colorScheme.background)
     ) {
-        val (
-            statusBarBox, headingRef, listRef,
-            backBtnRef, searchBarRef,
-        ) = createRefs()
+        val (statusBarBox, headingRef, listRef, backBtnRef, searchBarRef) = createRefs()
 
+        // Adaptive Status Bar Area
         Box(
             Modifier
                 .fillMaxWidth()
                 .height(WindowInsets.safeDrawing.asPaddingValues().calculateTopPadding() + 5.dp)
-                .background(CustomColors.LightGrayBlue)
+                .background(MaterialTheme.colorScheme.background) // Replaced divider color to prevent harsh visual cutoff
                 .constrainAs(statusBarBox) {
                     top.linkTo(parent.top)
                 }
         )
 
-
         IconButton(
-            onClick = {
-                onBackClick()
-            },
+            onClick = { onBackClick() },
             modifier = Modifier.constrainAs(backBtnRef) {
                 start.linkTo(parent.start, 15.dp)
                 top.linkTo(statusBarBox.bottom, 10.dp)
             }
         ) {
-            Icon(Icons.Default.ChevronLeft, contentDescription = "back", modifier = Modifier.size(28.dp)
+            Icon(
+                imageVector = Icons.Default.ChevronLeft,
+                contentDescription = "back",
+                modifier = Modifier.size(28.dp),
+                tint = MaterialTheme.colorScheme.onBackground // Dynamic high-contrast icon tint
             )
         }
 
@@ -97,6 +94,7 @@ fun CollegeListScreen(
             text = "Available Colleges",
             fontSize = 18.sp,
             fontFamily = FontFamily(Font(Res.font.publicsansbold)),
+            color = MaterialTheme.colorScheme.onBackground, // Dynamic text color
             modifier = Modifier.constrainAs(headingRef) {
                 start.linkTo(backBtnRef.end, 5.dp)
                 centerVerticallyTo(backBtnRef)
@@ -106,9 +104,7 @@ fun CollegeListScreen(
         SearchBar(
             placeholderText = "Search your college here",
             query = query,
-            onQueryChange = {
-                query = it
-            },
+            onQueryChange = { query = it },
             modifier = Modifier.constrainAs(searchBarRef) {
                 top.linkTo(backBtnRef.bottom, 10.dp)
                 start.linkTo(parent.start, 8.dp)
@@ -117,18 +113,17 @@ fun CollegeListScreen(
             }
         )
 
-
         PullToRefreshBox(
             state = pullToRefreshState,
             indicator = {
                 PullToRefreshDefaults.Indicator(
-                    containerColor = CustomColors.RichCerulean,
-                    color = Color.White,
-                    isRefreshing =isRefreshing,
+                    containerColor = MaterialTheme.colorScheme.primary,
+                    color = MaterialTheme.colorScheme.onPrimary,
+                    isRefreshing = isRefreshing,
                     state = pullToRefreshState
                 )
             },
-            isRefreshing =isRefreshing,
+            isRefreshing = isRefreshing,
             onRefresh = {
                 collegeScreenVM.fetchColleges()
             },
@@ -143,15 +138,13 @@ fun CollegeListScreen(
                     height = Dimension.fillToConstraints
                 },
             contentAlignment = Alignment.TopCenter
-        ){
+        ) {
             LazyColumn(
                 modifier = Modifier.fillMaxSize(),
-                verticalArrangement = Arrangement.spacedBy(5.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-
                 when (uiState) {
-
                     is FetchCollegesState.Success -> {
                         items(filteredColleges, key = { it.collegeId }) { college ->
                             CollegeCard(
@@ -167,7 +160,11 @@ fun CollegeListScreen(
                     is FetchCollegesState.Error -> {
                         item {
                             Spacer(Modifier.height(200.dp))
-                            Text("Unable to load. Pull to refresh")
+                            Text(
+                                text = "Unable to load. Pull to refresh",
+                                color = MaterialTheme.colorScheme.onSurfaceVariant, // Adaptive dark-mode safe reading color
+                                fontSize = 14.sp
+                            )
                         }
                     }
 
@@ -175,6 +172,5 @@ fun CollegeListScreen(
                 }
             }
         }
-
     }
 }

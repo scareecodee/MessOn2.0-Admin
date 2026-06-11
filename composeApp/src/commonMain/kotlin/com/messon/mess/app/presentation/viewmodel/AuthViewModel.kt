@@ -13,6 +13,8 @@ import com.messon.mess.app.utils.onError
 import com.messon.mess.app.utils.onSuccess
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -21,7 +23,6 @@ import kotlinx.coroutines.cancel
 class AuthViewModel(
     private val secureStorage: AuthSecureStorage,
     private val authRepository: AuthRepository,
-    private val dispatcher: CoroutineDispatcher,
     private val collegeRepository: CollegeRepository
 ) : ViewModel() {
     private val _uiState = MutableStateFlow<AuthState>(AuthState.Idle)
@@ -49,7 +50,7 @@ class AuthViewModel(
     fun onGoogleClick(googleAuth: GoogleAuth) {
         _uiState.value = AuthState.Loading
 
-        viewModelScope.launch(dispatcher) {
+        viewModelScope.launch {
 
             googleAuth.getGoogleToken()
                 .onSuccess { token ->

@@ -27,9 +27,6 @@ sealed class Screen(val route: String) {
 
     object MealRatingScreen: Screen(route ="meal_rating_screen")
 
-
-
-
-
+    object CouponStatusScreen: Screen(route ="coupon_status_screen")
 
 }
