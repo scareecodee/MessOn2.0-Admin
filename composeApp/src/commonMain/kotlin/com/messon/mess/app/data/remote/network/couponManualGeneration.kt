@@ -14,7 +14,7 @@ import io.ktor.http.contentType
 import io.ktor.util.network.UnresolvedAddressException
 import kotlinx.serialization.SerializationException
 
-private const val BASE_URL ="https://messon2-0-backend-testingv1.onrender.com/"
+private const val BASE_URL ="https://demo.messon.online/"
 
 
 class CouponManualGeneration(

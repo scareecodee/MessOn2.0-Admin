@@ -26,7 +26,7 @@ import io.ktor.client.request.patch
 import io.ktor.client.request.post
 import io.ktor.client.statement.bodyAsText
 
-private const val BASE_URL ="https://messon2-0-backend-testingv1.onrender.com/"
+private const val BASE_URL ="https://demo.messon.online/"
 
 class MessApi(
     private val httpClient: HttpClient
@@ -583,7 +583,7 @@ class MessApi(
 
         val response=try {
             httpClient.get(
-                urlString = "${BASE_URL}mess/rating-analytics"
+                urlString = "${BASE_URL}rating-analytics"
             ) {
                 contentType(ContentType.Application.Json)
                 parameter("days", days)
