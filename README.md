@@ -44,6 +44,12 @@ Built using **Kotlin and Compose Multiplatform**, MessOn Admin communicates with
 - Manage operational timings according to mess requirements.
 - Keep mess timings aligned with the backend configuration.
 
+### 7. Meal Compulsion Management
+- Configure which days have compulsory meals.
+- Mark meals as optional or compulsory according to the day.
+- Manage meal requirements for different days of the week.
+- Ensure students can view the applicable meal requirements in the Student application.
+- Keep meal compulsion settings synchronized through the backend.
 ---
 
 ## MessOn Ecosystem
